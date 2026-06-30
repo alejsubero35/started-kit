@@ -77,8 +77,11 @@ class ApiService {
           try { window.dispatchEvent(new Event('app-logout')); } catch (e) { /* noop */ }
         }
         // Do not dispatch a global logout here; let the auth layer decide how to react
-        const error = await response.json().catch(() => ({ message: 'Error de servidor' }));
-        throw new Error(error.message || `HTTP error ${response.status}`);
+        const errorBody = await response.json().catch(() => ({ message: 'Error de servidor' }));
+        const validationMsg = errorBody?.errors
+          ? Object.values(errorBody.errors as Record<string, string[]>).flat()[0]
+          : undefined;
+        throw new Error(validationMsg || errorBody.message || `HTTP error ${response.status}`);
       }
 
       try {
@@ -130,8 +133,11 @@ class ApiService {
           try { window.dispatchEvent(new Event('app-logout')); } catch (e) { /* noop */ }
         }
         // Do not dispatch a global logout here; let the auth layer decide how to react
-        const error = await response.json().catch(() => ({ message: 'Error de servidor' }));
-        throw new Error(error.message || `HTTP error ${response.status}`);
+        const errorBody = await response.json().catch(() => ({ message: 'Error de servidor' }));
+        const validationMsg = errorBody?.errors
+          ? Object.values(errorBody.errors as Record<string, string[]>).flat()[0]
+          : undefined;
+        throw new Error(validationMsg || errorBody.message || `HTTP error ${response.status}`);
       }
 
       try {
@@ -187,8 +193,11 @@ class ApiService {
         if (response.status === 401 || response.status === 419) {
           try { window.dispatchEvent(new Event('app-logout')); } catch (e) { /* noop */ }
         }
-        const error = await response.json().catch(() => ({ message: 'Error de servidor' }));
-        throw new Error(error.message || `HTTP error ${response.status}`);
+        const errorBody = await response.json().catch(() => ({ message: 'Error de servidor' }));
+        const validationMsg = errorBody?.errors
+          ? Object.values(errorBody.errors as Record<string, string[]>).flat()[0]
+          : undefined;
+        throw new Error(validationMsg || errorBody.message || `HTTP error ${response.status}`);
       }
 
       try {
@@ -238,8 +247,11 @@ class ApiService {
         if (response.status === 401 || response.status === 419) {
           try { window.dispatchEvent(new Event('app-logout')); } catch (e) { /* noop */ }
         }
-        const error = await response.json().catch(() => ({ message: 'Error de servidor' }));
-        throw new Error(error.message || `HTTP error ${response.status}`);
+        const errorBody = await response.json().catch(() => ({ message: 'Error de servidor' }));
+        const validationMsg = errorBody?.errors
+          ? Object.values(errorBody.errors as Record<string, string[]>).flat()[0]
+          : undefined;
+        throw new Error(validationMsg || errorBody.message || `HTTP error ${response.status}`);
       }
 
       try {
@@ -287,8 +299,11 @@ class ApiService {
         if (response.status === 401 || response.status === 419) {
           try { window.dispatchEvent(new Event('app-logout')); } catch (e) { /* noop */ }
         }
-        const error = await response.json().catch(() => ({ message: 'Error de servidor' }));
-        throw new Error(error.message || `HTTP error ${response.status}`);
+        const errorBody = await response.json().catch(() => ({ message: 'Error de servidor' }));
+        const validationMsg = errorBody?.errors
+          ? Object.values(errorBody.errors as Record<string, string[]>).flat()[0]
+          : undefined;
+        throw new Error(validationMsg || errorBody.message || `HTTP error ${response.status}`);
       }
 
       try {

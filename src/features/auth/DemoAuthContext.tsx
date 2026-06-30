@@ -30,7 +30,7 @@ function DemoAuthAdapterProvider({ children }: { children: ReactNode }) {
   const login = async (username: string, password: string): Promise<void> => {
     const ok = await realLogin(username, password);
     if (!ok) {
-      throw new Error('Credenciales inválidas');
+      throw new Error('No se pudo iniciar sesión. Verifica tus credenciales.');
     }
   };
 

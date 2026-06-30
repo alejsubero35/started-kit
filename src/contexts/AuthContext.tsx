@@ -3,9 +3,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
-import { authService } from '@/services/auth.service';
+import { idennaAuthService as authService } from '@/services/idenna.auth.service';
 import { apiService } from '@/services/api.service';
-import { setApiBaseTenant, setApiBaseCentral, setApiBaseFromLocation } from '@/config/api';
+import { setApiBaseFromLocation } from '@/config/api';
 import { AuthContext, User, AuthContextType } from './authContextObj';
 import { ReactNode } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
@@ -160,27 +160,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 				// ignore
 			}
 			// Siempre recalcular la base desde el host actual (tenant vs central) antes de autenticar
-			try { setApiBaseFromLocation(); } catch (e) { /* noop */ }
-			// Si el correo incluye dominio de tenant, ajustamos la base API dinámicamente
-			try {
-				const m = /@([a-zA-Z0-9_-]+)\.127-0-0-1\.sslip\.io$/i.exec(identifier);
-				if (m && m[1]) {
-					setApiBaseTenant(m[1]);
-					console.log('[Auth] Tenant detectado:', m[1]);
-				}
-			} catch (e) { /* noop */ }
-			console.log('[Auth] Base API antes de login (debug):', (window as unknown as { ___debugApiBase?: string }).___debugApiBase ?? 'no-debug-var');
+			try { setApiBaseFromLocation(); } catch { /* noop */ }
 			const response = await authService.login({ email: identifier, password });
-			console.log('[Auth] Login OK, usuario id:', (response.user as unknown as { id?: unknown })?.id);
-			const tenantHost = isTenantHost();
-			if (tenantHost && hasSuperAdminRole(response.user)) {
-				// Bloquear login de super-admin directamente en hosts de tenant; se debe usar impersonate.
-				apiService.clearToken();
-				setUser(null);
-				toast({ title: 'Acceso denegado', description: 'El super admin no puede iniciar sesión directo en este tenant. Usa impersonate desde el central.', variant: 'destructive' });
-				navigate('/login', { replace: true });
-				return false;
-			}
 			setUser(response.user as User);
 			lastLoginAt.current = Date.now();
 			try { localStorage.setItem(STORAGE_USER_KEY, JSON.stringify(response.user)); } catch (e) { console.warn('No se pudo guardar usuario en localStorage', e); }
@@ -192,12 +173,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 			}
 			// El frontend actual usa /dashboard como ruta principal de inicio.
 			const destination = '/dashboard';
-			// Debug logs para verificar rol y destino
-			try {
-				console.log('[Auth] Usuario autenticado:', response.user);
-				console.log('[Auth] isSuperAdmin:', hasSuperAdminRole(response.user));
-				console.log('[Auth] Navegando a:', destination);
-			} catch (e) { /* noop */ }
 			navigate(destination);
 			return true;
 		} catch (err) {
@@ -230,7 +205,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 		try { localStorage.clear(); } catch (e) { console.warn('No se pudo limpiar localStorage:', e); }
 		try { sessionStorage.clear(); } catch (e) { /* ignore */ }
 		// No forzar API central: si estás en un subdominio tenant, la base debe seguir ese host.
-		try { setApiBaseFromLocation(); } catch (e) { try { setApiBaseCentral(); } catch (e2) { /* noop */ } }
+		try { setApiBaseFromLocation(); } catch { /* noop */ }
 		// Clear in-memory user state and navigate to login
 		setUser(null);
 		toast({ title: 'Sesión cerrada', description: 'Has cerrado sesión',variant: 'success' });

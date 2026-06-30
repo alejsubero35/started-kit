@@ -40,9 +40,9 @@ export default function LoginPage() {
       <div className="max-w-md w-full space-y-8">
         <Card>
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold">Iniciar Sesión</CardTitle>
+            <CardTitle className="text-2xl font-bold">SIRP-NNA</CardTitle>
             <CardDescription>
-              Ingresa tus credenciales para acceder al sistema
+              Sistema Integral de Registro y Protección de Niños, Niñas y Adolescentes
             </CardDescription>
           </CardHeader>
           <CardContent>

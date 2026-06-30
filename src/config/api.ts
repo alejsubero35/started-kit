@@ -3,7 +3,7 @@ const API_BASE_STORAGE_KEY = 'api_base_url';
 
 const normalizeBaseUrl = (value: string): string => value.replace(/\/+$/, '');
 
-const getEnvApiBase = (): string => import.meta.env.VITE_API_URL || 'http://api-crm-adrian.test/api';
+const getEnvApiBase = (): string => import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
 
 let apiBaseOverride: string | null = null;
 
@@ -40,7 +40,16 @@ export const setApiBaseTenant = (_tenantSlug: string): void => {
 };
 
 export const setApiBaseFromLocation = (): void => {
-  setApiBaseCentral();
+  resetApiBaseFromEnv();
+};
+
+/** Restablece la URL de API desde variables de entorno (ignora override en localStorage). */
+export const resetApiBaseFromEnv = (): void => {
+  apiBaseOverride = null;
+  if (typeof window !== 'undefined') {
+    window.localStorage.removeItem(API_BASE_STORAGE_KEY);
+  }
+  setApiBase(getEnvApiBase());
 };
 
 export const API_URL = getApiBase();
