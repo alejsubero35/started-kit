@@ -7,14 +7,19 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
+
+type FormState = { code: string; name: string };
+
+const emptyForm: FormState = { code: '', name: '' };
 
 export default function CatalogTypePage() {
   const { type = '' } = useParams();
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({ code: '', name: '' });
+  const [editing, setEditing] = useState<CatalogItem | null>(null);
+  const [form, setForm] = useState<FormState>(emptyForm);
 
   const { data: items = [], isLoading } = useQuery({
     queryKey: ['catalog', type],
@@ -22,13 +27,33 @@ export default function CatalogTypePage() {
     enabled: !!type,
   });
 
-  const createMutation = useMutation({
-    mutationFn: () => catalogsService.create(type, form),
+  const resetDialog = () => {
+    setOpen(false);
+    setEditing(null);
+    setForm(emptyForm);
+  };
+
+  const openCreate = () => {
+    setEditing(null);
+    setForm(emptyForm);
+    setOpen(true);
+  };
+
+  const openEdit = (item: CatalogItem) => {
+    setEditing(item);
+    setForm({ code: item.code, name: item.name });
+    setOpen(true);
+  };
+
+  const saveMutation = useMutation({
+    mutationFn: () =>
+      editing
+        ? catalogsService.update(type, editing.id, form)
+        : catalogsService.create(type, form),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['catalog', type] });
-      setOpen(false);
-      setForm({ code: '', name: '' });
-      toast.success('Elemento creado');
+      resetDialog();
+      toast.success(editing ? 'Elemento actualizado' : 'Elemento creado');
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -46,13 +71,13 @@ export default function CatalogTypePage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Link to="/catalogs" className="text-muted-foreground hover:text-foreground">
+        <Link to="/catalogs" className="text-muted-foreground hover:text-[#103B73]">
           <ArrowLeft className="h-5 w-5" />
         </Link>
         <div className="flex-1">
-          <h1 className="text-2xl font-bold capitalize">{type.replace(/_/g, ' ')}</h1>
+          <h1 className="text-2xl font-bold capitalize text-[#103B73]">{type.replace(/_/g, ' ')}</h1>
         </div>
-        <CustomButton onClick={() => setOpen(true)} leftIcon={<Plus className="h-4 w-4" />}>
+        <CustomButton onClick={openCreate} leftIcon={<Plus className="h-4 w-4" />}>
           Agregar
         </CustomButton>
       </div>
@@ -64,15 +89,16 @@ export default function CatalogTypePage() {
           {list.map((item: CatalogItem) => (
             <Card key={item.id}>
               <CardHeader className="py-3">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-2">
                   <CardTitle className="text-base">{item.name}</CardTitle>
-                  <CustomButton
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => deleteMutation.mutate(item.id)}
-                  >
-                    <Trash2 className="h-4 w-4 text-destructive" />
-                  </CustomButton>
+                  <div className="flex items-center gap-1">
+                    <CustomButton variant="ghost" size="sm" onClick={() => openEdit(item)} aria-label="Editar">
+                      <Pencil className="h-4 w-4 text-[#103B73]" />
+                    </CustomButton>
+                    <CustomButton variant="ghost" size="sm" onClick={() => deleteMutation.mutate(item.id)} aria-label="Eliminar">
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </CustomButton>
+                  </div>
                 </div>
               </CardHeader>
               <CardContent className="pt-0 text-sm text-muted-foreground">{item.code}</CardContent>
@@ -81,13 +107,28 @@ export default function CatalogTypePage() {
         </div>
       )}
 
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open} onOpenChange={(v) => (v ? setOpen(true) : resetDialog())}>
         <DialogContent>
-          <DialogHeader><DialogTitle>Nuevo elemento</DialogTitle></DialogHeader>
+          <DialogHeader>
+            <DialogTitle>{editing ? 'Editar elemento' : 'Nuevo elemento'}</DialogTitle>
+          </DialogHeader>
           <div className="space-y-4">
-            <div><Label>Código</Label><Input value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })} /></div>
-            <div><Label>Nombre</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div>
-            <CustomButton className="w-full" onClick={() => createMutation.mutate()} loading={createMutation.isPending}>Guardar</CustomButton>
+            <div>
+              <Label>Código</Label>
+              <Input value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })} />
+            </div>
+            <div>
+              <Label>Nombre</Label>
+              <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+            </div>
+            <CustomButton
+              className="w-full"
+              onClick={() => saveMutation.mutate()}
+              loading={saveMutation.isPending}
+              disabled={!form.code.trim() || !form.name.trim()}
+            >
+              {editing ? 'Guardar cambios' : 'Crear'}
+            </CustomButton>
           </div>
         </DialogContent>
       </Dialog>

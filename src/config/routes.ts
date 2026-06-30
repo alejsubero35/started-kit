@@ -115,7 +115,7 @@ export const routeConfig: RouteConfig[] = [
     icon: BarChart3,
     component: ReportsPage,
     requiredRoles: ['super-admin', 'admin-nacional', 'coordinador-estatal', 'consultor'],
-    showInSidebar: true,
+    showInSidebar: false,
   },
   {
     id: 'settings',
@@ -124,7 +124,7 @@ export const routeConfig: RouteConfig[] = [
     icon: Settings,
     component: SettingsPage,
     requiredRoles: ['super-admin', 'admin-nacional'],
-    showInSidebar: true,
+    showInSidebar: false,
   },
   {
     id: 'unauthorized',

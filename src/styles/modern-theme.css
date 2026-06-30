@@ -37,12 +37,12 @@
     /* Sidebar - IDENNA Navy + Orange */
     --sidebar-background: 213 76% 26%; /* #103B73 */
     --sidebar-foreground: 0 0% 100%;     /* white */
-    --sidebar-primary: 27 88% 53%;     /* #F2811D */
+    --sidebar-primary: 0 72% 45%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 213 55% 20%;       /* darker navy */
-    --sidebar-accent-foreground: 27 88% 53%;
+    --sidebar-accent: 213 55% 20%;
+    --sidebar-accent-foreground: 0 72% 45%;
     --sidebar-border: 213 40% 35%;
-    --sidebar-ring: 27 88% 53%;
+    --sidebar-ring: 0 72% 45%;
 
     --radius: 0.5rem;
   }
@@ -66,7 +66,7 @@
     --muted: 213 30% 18%;
     --muted-foreground: 0 0% 75%;
 
-    --accent: 27 88% 53%;
+    --accent: 0 72% 45%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
@@ -74,16 +74,16 @@
 
     --border: 213 30% 22%;
     --input: 213 30% 22%;
-    --ring: 27 88% 53%;
+    --ring: 0 72% 45%;
 
     --sidebar-background: 213 76% 20%;
     --sidebar-foreground: 0 0% 100%;
-    --sidebar-primary: 27 88% 53%;
+    --sidebar-primary: 0 72% 45%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 213 60% 24%;
-    --sidebar-accent-foreground: 27 88% 53%;
+    --sidebar-accent-foreground: 0 72% 45%;
     --sidebar-border: 213 40% 32%;
-    --sidebar-ring: 27 88% 53%;
+    --sidebar-ring: 0 72% 45%;
   }
 }
 

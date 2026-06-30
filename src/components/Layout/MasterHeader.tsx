@@ -64,7 +64,7 @@ export function MasterHeader({ className = '' }: HeaderProps) {
   };
 
   return (
-    <header className={`sticky top-0 z-50 w-full border-b border-border/50 glass-header shadow-soft transition-smooth border-t-[3px] border-t-[#F2811D] ${className}`}>
+    <header className={`sticky top-0 z-50 w-full border-b border-border/50 glass-header shadow-soft transition-smooth border-t-[3px] border-t-[#C8102E] ${className}`}>
       <div className="flex w-full h-16 items-center justify-between px-4 lg:px-8">
         {/* Left side - Menu Toggle (only on mobile/tablet) */}
         <div className="flex items-center gap-3">
@@ -90,7 +90,7 @@ export function MasterHeader({ className = '' }: HeaderProps) {
 
         {/* Center - Title with Logo (visible on mobile) */}
         <div className="flex items-center gap-2 lg:hidden absolute left-1/2 -translate-x-1/2">
-          <img src="/img/logo.jpeg" alt="IDENNA" className="h-8 w-8 object-contain rounded bg-white p-0.5" />
+          <img src="/img/logo.png" alt="IDENNA" className="h-8 w-8 object-contain rounded bg-white p-0.5" />
           <span className="font-semibold text-foreground text-base">SIRP-NNA</span>
         </div>
 

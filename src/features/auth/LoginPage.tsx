@@ -37,7 +37,7 @@ export default function LoginPage() {
       <div className="max-w-md w-full space-y-8">
         <div className="text-center space-y-4">
           <div className="mx-auto flex h-20 w-full max-w-xs items-center justify-center rounded-xl bg-white p-3 shadow-md border border-border/50">
-            <img src="/img/logo.jpeg" alt="IDENNA" className="h-full w-full object-contain" />
+            <img src="/img/logo.png" alt="IDENNA" className="h-full w-full object-contain" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-[#103B73]">SIRP-NNA</h1>
@@ -48,7 +48,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <Card className="border-t-4 border-t-[#F2811D] shadow-lg">
+        <Card className="border-t-4 border-t-[#C8102E] shadow-lg">
           <CardHeader className="text-center pb-2">
             <CardTitle className="text-lg text-[#103B73]">Iniciar sesión</CardTitle>
             <CardDescription>Ingresa tus credenciales para acceder al sistema</CardDescription>
