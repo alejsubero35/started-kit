@@ -7,8 +7,8 @@ import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 import { registerServiceWorker } from './utils/serviceWorkerRegistration'
-import { registerSyncListeners } from './lib/offlineSync'
-import { enableAutoBackgroundSync } from './lib/offlineSync'
+import { registerSyncListeners } from './lib/offlineSync';
+import { enableAutoBackgroundSync } from './lib/offlineSync';
 
 // Register the service worker only after the app has loaded
 window.addEventListener('load', () => {

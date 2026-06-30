@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Package, Plus, PencilSimple, Trash } from '@phosphor-icons/react';
-import { DataTable, DataTableColumn } from '@/components/DataTable';
+import { DataTableView, RowActions, createRowActions, useDataTable, type DataTableColumn } from '@/components/data-table';
 import { EditModal } from '@/components/ui/EditModal';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { useToast } from '@/hooks/use-toast';
@@ -115,6 +115,17 @@ name: data.name,
     toast({ variant: 'success', title: 'Clientes creado', description: 'Registro creado exitosamente.' });
   };
 
+  const table = useDataTable({
+    items: clientess,
+    initialPageSize: 10,
+    searchFields: ['name', 'identity_Card', 'phone', 'address'],
+  });
+
+  const rowActions = [
+    createRowActions.edit<Clientes>(handleEdit),
+    createRowActions.delete<Clientes>(handleDeleteClick),
+  ];
+
   const columns: DataTableColumn<Clientes>[] = [
 {
       id: 'name',
@@ -143,16 +154,7 @@ name: data.name,
     {
       id: 'actions',
       header: 'Acciones',
-      cell: ({ item }) => (
-        <div className="flex gap-2">
-          <Button variant="ghost" size="sm" onClick={() => handleEdit(item)}>
-            <PencilSimple className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="sm" onClick={() => handleDeleteClick(item)}>
-            <Trash className="h-4 w-4 text-red-500" />
-          </Button>
-        </div>
-      ),
+      cell: ({ item }) => <RowActions item={item} actions={rowActions} />,
     },
   ];
 
@@ -180,11 +182,24 @@ name: data.name,
         </Card>
       </div>
 
-      <DataTable<Clientes>
-        items={clientess}
+      <DataTableView<Clientes>
+        items={table.items}
         columns={columns}
         rowKey={({ item }) => String(item.id)}
         wrapInCard
+        toolbar={{
+          search: {
+            value: table.search,
+            onChange: table.setSearch,
+            placeholder: 'Buscar clientes...',
+          },
+        }}
+        pagination={table.pagination}
+        emptyState={{
+          title: 'No hay clientes',
+          description: 'No se encontraron clientes registrados.',
+          action: { label: 'Nuevo cliente', onClick: handleCreate },
+        }}
       />
 
       <EditModal

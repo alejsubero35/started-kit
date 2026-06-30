@@ -28,8 +28,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Package, Plus, PencilSimple, Trash } from '@phosphor-icons/react';
-import { DataTable, DataTableColumn } from '@/components/DataTable';
+import { Package, Plus } from '@phosphor-icons/react';
+import { DataTableView, RowActions, createRowActions, useDataTable, type DataTableColumn } from '@/components/data-table';
 import { EditModal } from '@/components/ui/EditModal';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { useToast } from '@/hooks/use-toast';
@@ -123,21 +123,23 @@ export default function {{ENTITY_PASCAL}}CRUD() {
     toast({ variant: 'success', title: '{{ENTITY_TITLE}} creado', description: 'Registro creado exitosamente.' });
   };
 
+  const table = useDataTable({
+    items: {{ENTITY_LOWER}}s,
+    initialPageSize: 10,
+    searchFields: [{{SEARCH_FIELDS}}],
+  });
+
+  const rowActions = [
+    createRowActions.edit<{{ENTITY_PASCAL}}>(handleEdit),
+    createRowActions.delete<{{ENTITY_PASCAL}}>(handleDeleteClick),
+  ];
+
   const columns: DataTableColumn<{{ENTITY_PASCAL}}>[] = [
 {{COLUMNS}}
     {
       id: 'actions',
       header: 'Acciones',
-      cell: ({ item }) => (
-        <div className="flex gap-2">
-          <Button variant="ghost" size="sm" onClick={() => handleEdit(item)}>
-            <PencilSimple className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="sm" onClick={() => handleDeleteClick(item)}>
-            <Trash className="h-4 w-4 text-red-500" />
-          </Button>
-        </div>
-      ),
+      cell: ({ item }) => <RowActions item={item} actions={rowActions} />,
     },
   ];
 
@@ -165,11 +167,24 @@ export default function {{ENTITY_PASCAL}}CRUD() {
         </Card>
       </div>
 
-      <DataTable<{{ENTITY_PASCAL}}>
-        items={{{ENTITY_LOWER}}s}
+      <DataTableView<{{ENTITY_PASCAL}}>
+        items={table.items}
         columns={columns}
         rowKey={({ item }) => String(item.id)}
         wrapInCard
+        toolbar={{
+          search: {
+            value: table.search,
+            onChange: table.setSearch,
+            placeholder: 'Buscar {{ENTITY_LOWER}}s...',
+          },
+        }}
+        pagination={table.pagination}
+        emptyState={{
+          title: 'No hay {{ENTITY_LOWER}}s',
+          description: 'No se encontraron registros.',
+          action: { label: 'Nuevo {{ENTITY_TITLE}}', onClick: handleCreate },
+        }}
       />
 
       <EditModal
@@ -505,6 +520,7 @@ const generateCRUDContent = (entityName, fields, sectionTitle) => {
   // Generate columns with hideBelow for responsive DataTable
   let columns = '';
   const visibleFields = fields.filter(f => f.name !== 'isActive');
+  const searchFields = visibleFields.map((f) => `'${f.name}'`).join(', ');
   visibleFields.forEach((field, idx) => {
     const hideBelow = idx >= 2 ? `\n      hideBelow: 'md' as const,\n      mobileLabel: '${field.label}',` : '';
     columns += `    {\n      id: '${field.name}',\n      header: '${field.label}',\n      cell: ({ item }) => <span>{String(item.${field.name})}</span>,${hideBelow}\n    },\n`;
@@ -561,6 +577,7 @@ const generateCRUDContent = (entityName, fields, sectionTitle) => {
     .replace(/\{\{EDIT_RESET\}\}/g, editReset.trim())
     .replace(/\{\{CREATE_FIELDS\}\}/g, createFields.trim())
     .replace(/\{\{COLUMNS\}\}/g, columns.trim())
+    .replace(/\{\{SEARCH_FIELDS\}\}/g, searchFields)
     .replace(/\{\{MOCK_DATA\}\}/g, mockData.trim())
     .replace(/\{\{EDIT_FORM_FIELDS\}\}/g, editFormFields.trim())
     .replace(/\{\{CREATE_FORM_FIELDS\}\}/g, createFormFields.trim());

@@ -16,9 +16,11 @@ export function useUserContext() {
     queryKey: ['user', 'context', userId ?? 'anonymous'],
     queryFn: () => userService.getContext(),
     enabled: !!userId,
-    staleTime: 5 * 60_000, // 5 min
+    staleTime: 5 * 60_000,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
     refetchOnMount: false,
+    retry: 1,
+    placeholderData: () => (userId ? userService.getContextFromStorage() : undefined),
   });
 }

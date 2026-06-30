@@ -3,6 +3,7 @@ import { useUI } from '@/contexts/UIContext';
 import { MasterHeader } from './MasterHeader';
 import { MasterSidebar } from './MasterSidebar';
 import { MobileBottomNav } from './MobileBottomNav';
+import { OfflineStatusBar } from '@/offline/components/OfflineStatusBar';
 import { cn } from '@/lib/utils';
 
 interface MainLayoutProps {
@@ -28,16 +29,16 @@ export function MainLayout({ children, className = '' }: MainLayoutProps) {
 
       {/* Main Content Area */}
       <div className="flex flex-1 flex-col overflow-hidden">
+        <OfflineStatusBar />
         {/* Header */}
         <MasterHeader />
 
         {/* Main Content */}
         <main
           className={cn(
-            "flex-1 overflow-y-auto bg-background",
-            "transition-all duration-300 ease-in-out",
-            isMobile ? "pb-20" : "pb-0",
-            className
+            'flex-1 overflow-y-auto bg-background',
+            isMobile ? 'pb-20' : 'pb-0',
+            className,
           )}
         >
           <div className="w-full p-4 lg:p-6">

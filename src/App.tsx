@@ -7,6 +7,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { UIProvider } from '@/contexts/UIContext';
 import { DemoAuthProvider } from '@/features/auth/DemoAuthContext';
 import { NavigationConfigProvider } from '@/contexts/NavigationConfigContext';
+import { OfflineProvider } from '@/offline/providers/OfflineProvider';
 import { AppRoutes } from '@/routes/AppRoutes';
 
 // Create a client for React Query
@@ -28,9 +29,11 @@ function App() {
           <UIProvider>
             <NavigationConfigProvider>
               <DemoAuthProvider>
-                <AppRoutes />
-                <Toaster />
-                <Sonner />
+                <OfflineProvider>
+                  <AppRoutes />
+                  <Toaster />
+                  <Sonner />
+                </OfflineProvider>
               </DemoAuthProvider>
             </NavigationConfigProvider>
           </UIProvider>

@@ -180,13 +180,23 @@ self.addEventListener('sync', (event) => {
       (async () => {
         try {
           const synced = await processPendingInvoices();
-          // Notify clients about sync result
           const all = await clients.matchAll({ type: 'window' });
           for (const c of all) {
             c.postMessage({ type: 'pos:pendingSynced', detail: { synced } });
           }
         } catch (e) {
           console.error('SW sync error', e);
+        }
+      })()
+    );
+  }
+
+  if (event.tag === 'offline-sync-queue') {
+    event.waitUntil(
+      (async () => {
+        const all = await clients.matchAll({ type: 'window', includeUncontrolled: true });
+        for (const client of all) {
+          client.postMessage({ type: 'offline:triggerSync' });
         }
       })()
     );
@@ -205,6 +215,17 @@ self.addEventListener('message', (event) => {
           for (const c of all) c.postMessage({ type: 'pos:pendingSynced', detail: { synced } });
         } catch (e) {
           console.error('SW: triggerSync failed', e);
+        }
+      })()
+    );
+  }
+
+  if (data && data.type === 'offline:triggerSync') {
+    event.waitUntil(
+      (async () => {
+        const all = await clients.matchAll({ type: 'window', includeUncontrolled: true });
+        for (const client of all) {
+          client.postMessage({ type: 'offline:triggerSync' });
         }
       })()
     );

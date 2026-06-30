@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Package, Plus, PencilSimple, Trash } from '@phosphor-icons/react';
-import { DataTable, DataTableColumn } from '@/components/DataTable';
+import { DataTableView, RowActions, createRowActions, useDataTable, type DataTableColumn } from '@/components/data-table';
 import { EditModal } from '@/components/ui/EditModal';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { useToast } from '@/hooks/use-toast';
@@ -164,6 +164,17 @@ export default function ProductCRUD() {
     }
   };
 
+  const table = useDataTable({
+    items: products,
+    initialPageSize: 10,
+    searchFields: ['name', 'category', 'sku', 'supplier'],
+  });
+
+  const rowActions = [
+    createRowActions.edit<Product>(handleEdit),
+    createRowActions.delete<Product>(handleDeleteClick),
+  ];
+
   const columns: DataTableColumn<Product>[] = [
     {
       id: 'index',
@@ -224,30 +235,7 @@ export default function ProductCRUD() {
     {
       id: 'actions',
       header: 'Acciones',
-      hideBelow: 'xl',
-      mobileLabel: 'Acciones',
-      headerClassName: 'w-24',
-      cellClassName: 'w-24',
-      cell: ({ item }) => (
-        <div className="flex items-center gap-1.5">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="h-8 w-8 p-0"
-            onClick={() => handleEdit(item)}
-          >
-            <PencilSimple className="h-3.5 w-3.5" weight="duotone" />
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:border-red-300"
-            onClick={() => handleDeleteClick(item)}
-          >
-            <Trash className="h-3.5 w-3.5" weight="duotone" />
-          </Button>
-        </div>
-      ),
+      cell: ({ item }) => <RowActions item={item} actions={rowActions} />,
     },
   ];
 
@@ -319,11 +307,24 @@ export default function ProductCRUD() {
       </div>
 
       {/* Products table with responsive collapse */}
-      <DataTable<Product>
-        items={products}
+      <DataTableView<Product>
+        items={table.items}
         columns={columns}
         rowKey={({ item }) => String(item.id)}
         wrapInCard
+        toolbar={{
+          search: {
+            value: table.search,
+            onChange: table.setSearch,
+            placeholder: 'Buscar productos...',
+          },
+        }}
+        pagination={table.pagination}
+        emptyState={{
+          title: 'No hay productos',
+          description: 'No se encontraron productos en el catálogo.',
+          action: { label: 'Nuevo producto', onClick: handleCreate },
+        }}
       />
 
       {/* Edit Modal */}

@@ -41,12 +41,24 @@ export default defineConfig(({ mode }) => ({
       },
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
       manifest: {
-        name: 'Venta Simplify',
-        short_name: 'VentaApp',
-        description: 'Sistema de Punto de Venta',
-        theme_color: '#f8e109',
-        background_color: '#d5d2b4',
+        name: 'Started Kit',
+        short_name: 'Started',
+        description: 'Boilerplate administrativo offline-first',
+        theme_color: '#0B5FFF',
+        background_color: '#ffffff',
         display: 'standalone',
+        orientation: 'portrait-primary',
+        start_url: './',
+        scope: './',
+        categories: ['business', 'productivity'],
+        shortcuts: [
+          {
+            name: 'Usuarios',
+            short_name: 'Usuarios',
+            url: './users',
+            icons: [{ src: 'pwa-192x192.png', sizes: '192x192' }],
+          },
+        ],
         icons: [
           {
             src: 'pwa-192x192.png',
@@ -69,26 +81,49 @@ export default defineConfig(({ mode }) => ({
       workbox: {
         runtimeCaching: [
           {
-            urlPattern: /^https:\/\/api\.example\.com\/.*$/i,
+            urlPattern: ({ request }) => request.destination === 'document',
             handler: 'NetworkFirst',
             options: {
-              cacheName: 'api-cache',
-              expiration: {
-                maxEntries: 100,
-                maxAgeSeconds: 60 * 60 * 24 * 7 // 1 week
-              },
-              networkTimeoutSeconds: 10
-            }
+              cacheName: 'html-cache',
+              networkTimeoutSeconds: 5,
+            },
           },
           {
-            urlPattern: /\.(js|css|png|jpg|jpeg|svg|ico)$/,
+            urlPattern: ({ request }) =>
+              ['style', 'script', 'font'].includes(request.destination),
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'static-assets-cache',
+            },
+          },
+          {
+            urlPattern: ({ url }) => url.pathname.startsWith('/api') || url.hostname.includes('api'),
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'api-get-cache',
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 60 * 24,
+              },
+              networkTimeoutSeconds: 10,
+            },
+          },
+          {
+            urlPattern: ({ request }) => request.destination === 'image',
             handler: 'StaleWhileRevalidate',
             options: {
-              cacheName: 'assets-cache',
-            }
-          }
-        ]
-      }
+              cacheName: 'images-cache',
+              expiration: {
+                maxEntries: 80,
+                maxAgeSeconds: 60 * 60 * 24 * 30,
+              },
+            },
+          },
+        ],
+      },
+      devOptions: {
+        enabled: true,
+      },
     }),
   ],
   resolve: {
