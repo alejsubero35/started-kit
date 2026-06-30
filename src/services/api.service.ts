@@ -101,6 +101,49 @@ class ApiService {
   }
 
   /**
+   * POST multipart/form-data (file uploads)
+   */
+  async postFormData<T>(endpoint: string, formData: FormData, auth = true): Promise<T> {
+    const url = `${getApiBase()}${endpoint}`;
+    const token = auth ? this.loadToken() : null;
+    const headers: Record<string, string> = {
+      Accept: 'application/json',
+      ...(auth && token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.json().catch(() => ({ message: 'Error de servidor' }));
+      throw new Error(errorBody.message || `HTTP error ${response.status}`);
+    }
+
+    return response.json() as Promise<T>;
+  }
+
+  /**
+   * Download file (export reports)
+   */
+  async downloadFile(endpoint: string, filename: string): Promise<void> {
+    const url = `${getApiBase()}${endpoint}`;
+    const token = this.loadToken();
+    const response = await fetch(url, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+    if (!response.ok) throw new Error('Error al descargar archivo');
+    const blob = await response.blob();
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(link.href);
+  }
+
+  /**
    * POST request
    */
   async post<D, T>(endpoint: string, data: D, auth: boolean = true, options: RequestOptions = {}): Promise<T> {

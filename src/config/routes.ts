@@ -7,6 +7,8 @@ import {
   UserPlus,
   Settings,
   LogIn,
+  Upload,
+  BarChart3,
 } from 'lucide-react';
 
 export interface RouteConfig {
@@ -29,6 +31,8 @@ const CatalogTypePage = React.lazy(() => import('@/pages/catalogs/CatalogTypePag
 const NnaListPage = React.lazy(() => import('@/pages/nna/NnaListPage'));
 const NnaWizardPage = React.lazy(() => import('@/pages/nna/NnaWizardPage'));
 const SettingsPage = React.lazy(() => import('@/pages/SettingsPage'));
+const ImportPage = React.lazy(() => import('@/pages/imports/ImportPage'));
+const ReportsPage = React.lazy(() => import('@/pages/reports/ReportsPage'));
 const NotFound = React.lazy(() => import('@/pages/NotFound'));
 const Unauthorized = React.lazy(() => import('@/pages/Unauthorized'));
 
@@ -94,6 +98,24 @@ export const routeConfig: RouteConfig[] = [
     component: CatalogTypePage,
     requiredRoles: ['super-admin', 'admin-nacional'],
     showInSidebar: false,
+  },
+  {
+    id: 'imports',
+    path: '/imports',
+    label: 'Importación',
+    icon: Upload,
+    component: ImportPage,
+    requiredRoles: ['super-admin', 'admin-nacional'],
+    showInSidebar: true,
+  },
+  {
+    id: 'reports',
+    path: '/reports',
+    label: 'Reportes',
+    icon: BarChart3,
+    component: ReportsPage,
+    requiredRoles: ['super-admin', 'admin-nacional', 'coordinador-estatal', 'consultor'],
+    showInSidebar: true,
   },
   {
     id: 'settings',
