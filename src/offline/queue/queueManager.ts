@@ -80,11 +80,14 @@ export async function seedOfflineRecords<T extends Record<string, unknown>>(
 ): Promise<void> {
   const repo = new GenericRepository<T>(entity);
   const existing = await repo.getAll();
-  if (existing.length > 0) return;
+  const existingIds = new Set(existing.map((item) => item.localId));
 
   for (const record of records) {
     const localId = getLocalId(record);
+    if (existingIds.has(localId)) continue;
+
     await repo.upsert(localId, record, 'synced', record.id as string | number);
+    existingIds.add(localId);
   }
 }
 
@@ -198,18 +201,22 @@ export async function processSyncQueue(): Promise<{ synced: number; failed: numb
 }
 
 export async function registerBackgroundSync(): Promise<void> {
+  if (!isBrowserOnline()) return;
   if (!('serviceWorker' in navigator)) return;
 
   try {
-    const registration = await navigator.serviceWorker.ready;
+    const registration = await Promise.race([
+      navigator.serviceWorker.ready,
+      new Promise<ServiceWorkerRegistration>((_, reject) => {
+        window.setTimeout(() => reject(new Error('service-worker-timeout')), 2_000);
+      }),
+    ]);
     const syncManager = (registration as ServiceWorkerRegistration & {
       sync?: { register: (tag: string) => Promise<void> };
     }).sync;
 
     if (syncManager?.register) {
       await syncManager.register('offline-sync-queue');
-    } else if (navigator.serviceWorker.controller) {
-      navigator.serviceWorker.controller.postMessage({ type: 'offline:triggerSync' });
     }
   } catch {
     // Background Sync no soportado en este navegador

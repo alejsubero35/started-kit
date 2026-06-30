@@ -7,7 +7,7 @@ import {
   registerEntityAdapter,
 } from '../services/sync.service';
 import { getPendingCount } from '../queue/syncQueue';
-import { getSyncMetadata } from '../services/cache.service';
+import { getSyncMetadata, setSyncMetadata } from '../services/cache.service';
 import { useOfflineEventRefresh } from '../hooks/useOfflineEventRefresh';
 import { userEntityAdapter } from '@/features/users/adapters/user.adapter';
 import type { SyncMetadata } from '../models/sync-status';
@@ -58,7 +58,14 @@ export function OfflineProvider({ children }: { children: React.ReactNode }) {
 
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
-    void refreshState();
+
+    void (async () => {
+      const meta = await getSyncMetadata();
+      if (meta.isSyncing) {
+        await setSyncMetadata({ isSyncing: false });
+      }
+      await refreshState();
+    })();
 
     return () => {
       cleanupNetwork();
