@@ -125,7 +125,7 @@ export function OfflineStatusBar({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        'relative sticky top-0 z-[60] border-b border-border/60 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80',
+        'relative sticky top-0 z-[60] border-b border-[#103B73]/15 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80',
         className,
       )}
     >
@@ -166,8 +166,7 @@ export function OfflineStatusBar({ className }: { className?: string }) {
 
           <Button
             size="sm"
-            variant="secondary"
-            className="h-7 text-xs"
+            className="h-7 text-xs bg-[#103B73] hover:bg-[#0d3260] text-white"
             disabled={!isOnline || isSyncing || pendingOperations === 0}
             onClick={() => void startSync()}
           >

@@ -32,9 +32,9 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
       >
         <div className="mb-4 flex items-center justify-center">
           <img
-            src="/img/ms-icon-310x310.png"
-            alt="Logo Venta Simplyfy"
-            className="h-20 w-20 object-contain drop-shadow-[0_0_18px_rgba(15,23,42,0.55)] logo-fade-in"
+            src="/img/logo.jpeg"
+            alt="IDENNA"
+            className="h-20 w-20 object-contain rounded-lg bg-white p-2 drop-shadow-[0_0_18px_rgba(16,59,115,0.35)] logo-fade-in"
           />
         </div>
 

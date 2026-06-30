@@ -25,25 +25,33 @@ export default function LoginPage() {
 
   const onSubmit = async (data: LoginFormData) => {
     setError('');
-    console.log('Iniciando login con:', data.username);
     try {
       await login(data.username, data.password);
-      console.log('Login exitoso');
     } catch (err: any) {
-      console.error('Error en login:', err);
       setError(err.message || 'Error al iniciar sesión');
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#103B73]/5 via-background to-[#F2811D]/10 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
-        <Card>
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold">SIRP-NNA</CardTitle>
-            <CardDescription>
+        <div className="text-center space-y-4">
+          <div className="mx-auto flex h-20 w-full max-w-xs items-center justify-center rounded-xl bg-white p-3 shadow-md border border-border/50">
+            <img src="/img/logo.jpeg" alt="IDENNA" className="h-full w-full object-contain" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-[#103B73]">SIRP-NNA</h1>
+            <p className="text-sm text-muted-foreground mt-1">
               Sistema Integral de Registro y Protección de Niños, Niñas y Adolescentes
-            </CardDescription>
+            </p>
+            <p className="text-xs text-muted-foreground/80 mt-1">IDENNA · Venezuela</p>
+          </div>
+        </div>
+
+        <Card className="border-t-4 border-t-[#F2811D] shadow-lg">
+          <CardHeader className="text-center pb-2">
+            <CardTitle className="text-lg text-[#103B73]">Iniciar sesión</CardTitle>
+            <CardDescription>Ingresa tus credenciales para acceder al sistema</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -62,7 +70,6 @@ export default function LoginPage() {
                   {...register('username', {
                     required: 'El usuario o correo es requerido',
                     validate: (value) => {
-                      // Validar si es email o username
                       const isEmail = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value);
                       const isUsername = /^[a-zA-Z0-9_]{3,20}$/.test(value);
                       return isEmail || isUsername || 'Ingresa un correo válido o un nombre de usuario';
@@ -97,7 +104,7 @@ export default function LoginPage() {
 
               <Button
                 type="submit"
-                className="w-full"
+                className="w-full bg-[#103B73] hover:bg-[#0d3260] text-white"
                 disabled={isLoading}
               >
                 {isLoading ? (

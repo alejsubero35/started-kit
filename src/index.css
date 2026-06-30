@@ -8,37 +8,37 @@
 
 @layer base {
   :root {
-    --background: 260 33% 98%;    /* #F8F7FC - Light purple background */
-    --foreground: 260 15% 20%;    /* #333333 with a purple tint */
+    --background: 210 20% 98%;  /* light gray background */
+    --foreground: 213 40% 15%;  /* dark navy text */
 
     --card: 0 0% 100%;          /* white */
-    --card-foreground: 260 15% 20%; /* #333333 with a purple tint */
+    --card-foreground: 213 40% 15%;
 
     --popover: 0 0% 100%;       /* white */
     --popover-foreground: 260 15% 20%; /* #333333 with a purple tint */
 
-    --primary: 255 67% 75%;     /* #9b87f5 - Primary purple */
+    --primary: 213 76% 26%;     /* #103B73 - IDENNA navy */
     --primary-foreground: 0 0% 100%; /* #FFFFFF */
 
-    --secondary: 260 27% 54%;   /* #7E69AB - Secondary purple */
+    --secondary: 213 55% 35%;   /* lighter navy */
     --secondary-foreground: 0 0% 100%; /* #FFFFFF */
 
-    --muted: 260 33% 94%;       /* #E5DEFF - Soft purple */
-    --muted-foreground: 260 15% 45%; /* #737373 with a purple tint */
+    --muted: 210 25% 96%;       /* light gray */
+    --muted-foreground: 215 16% 40%; /* readable gray */
 
-    --accent: 255 67% 75%;      /* #9b87f5 - Primary purple */
+    --accent: 27 88% 53%;       /* #F2811D - IDENNA orange */
     --accent-foreground: 0 0% 100%; /* #FFFFFF */
 
     --destructive: 0 84.2% 60.2%; /* standard red */
     --destructive-foreground: 0 0% 100%; /* #FFFFFF */
 
-    --border: 260 33% 88%;      /* #D9D4E8 - Light purple border */
-    --input: 260 33% 88%;       /* #D9D4E8 - Light purple input */
-    --ring: 255 67% 75%;        /* #9b87f5 - Primary purple */
+    --border: 214 32% 88%;      /* light border */
+    --input: 214 32% 88%;
+    --ring: 213 76% 26%;        /* #103B73 */
 
-    /* Gradient colors for top bar (header) - configurable via Theme Customizer */
-    --topbar-from: #0B5FFF;
-    --topbar-to: #00C7FF;
+    /* Gradient colors for top bar (header) */
+    --topbar-from: #103B73;
+    --topbar-to: #F2811D;
 
     --radius: 0.5rem;
 
@@ -54,11 +54,11 @@
   --sidebar-ring: 27 88% 53%;
 
   /* Chart colors for Recharts */
-  --chart-1: 255 67% 75%;      /* primary purple */
-  --chart-2: 260 27% 54%;      /* secondary purple */
-  --chart-3: 27 88% 53%;       /* orange accent */
-  --chart-4: 213 76% 26%;      /* navy */
-  --chart-5: 0 84.2% 60.2%;    /* red */
+  --chart-1: 213 76% 26%;      /* navy */
+  --chart-2: 27 88% 53%;       /* orange */
+  --chart-3: 0 72% 45%;        /* red IDENNA */
+  --chart-4: 142 45% 35%;      /* green */
+  --chart-5: 45 95% 50%;       /* yellow */
   }
 
   .dark {
@@ -71,16 +71,16 @@
     --popover: 260 33% 20%;     /* slightly lighter than background */
     --popover-foreground: 0 0% 100%; /* #FFFFFF */
 
-    --primary: 255 67% 75%;     /* #9b87f5 - Primary purple */
+    --primary: 213 76% 40%;     /* lighter navy for dark mode */
     --primary-foreground: 0 0% 100%; /* #FFFFFF */
 
-    --secondary: 260 27% 54%;   /* #7E69AB - Secondary purple */
+    --secondary: 213 55% 35%;
     --secondary-foreground: 0 0% 100%; /* #FFFFFF */
 
-    --muted: 260 33% 25%;       /* slightly lighter than background */
-    --muted-foreground: 0 0% 85%; /* lighter version of foreground */
+    --muted: 213 30% 20%;
+    --muted-foreground: 0 0% 85%;
 
-    --accent: 260 27% 64%;      /* #9F87C7 - Lighter purple accent */
+    --accent: 27 88% 53%;       /* #F2811D */
     --accent-foreground: 0 0% 100%; /* #FFFFFF */
 
     --destructive: 0 62.8% 30.6%;
@@ -88,7 +88,7 @@
 
     --border: 260 33% 30%;      /* #3B3252 - Darker purple border */
     --input: 260 33% 30%;       /* #3B3252 - Darker purple input */
-    --ring: 255 67% 75%;        /* #9b87f5 - Primary purple */
+    --ring: 213 76% 40%;
 
     /* Dark theme: keep sidebar consistent with brand colors */
     --sidebar-background: 213 76% 20%; /* darker navy variant */

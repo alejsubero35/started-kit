@@ -1,4 +1,4 @@
-/* Modern SaaS Theme - Slate + Indigo Electric */
+/* IDENNA / SIRP-NNA Theme - Navy + Orange accent */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 @layer base {
@@ -13,8 +13,8 @@
     --popover: 0 0% 100%;                /* #FFFFFF */
     --popover-foreground: 222 47% 11%;   /* #0F172A */
 
-    /* Indigo Electric Primary */
-    --primary: 239 84% 67%;              /* #6366F1 - Indigo 500 */
+    /* IDENNA Navy Primary */
+    --primary: 213 76% 26%;              /* #103B73 */
     --primary-foreground: 0 0% 100%;     /* #FFFFFF */
 
     /* Slate Secondary */
@@ -24,67 +24,66 @@
     --muted: 210 40% 96%;                /* #F1F5F9 - Slate 100 */
     --muted-foreground: 215 16% 47%;     /* #64748B - Slate 500 */
 
-    --accent: 239 84% 67%;               /* #6366F1 - Indigo 500 */
-    --accent-foreground: 0 0% 100%;      /* #FFFFFF */
+    --accent: 27 88% 53%;                /* #F2811D - Orange accent */
+    --accent-foreground: 0 0% 100%;        /* #FFFFFF */
 
     --destructive: 0 84% 60%;            /* #EF4444 - Red 500 */
     --destructive-foreground: 0 0% 100%; /* #FFFFFF */
 
     --border: 214 32% 91%;               /* #E2E8F0 - Slate 200 */
     --input: 214 32% 91%;                /* #E2E8F0 - Slate 200 */
-    --ring: 239 84% 67%;                 /* #6366F1 - Indigo 500 */
+    --ring: 213 76% 26%;                 /* #103B73 */
 
-    /* Sidebar - Dark Slate with Indigo accents */
-    --sidebar-background: 222 47% 11%;   /* #0F172A - Slate 900 */
-    --sidebar-foreground: 210 40% 98%;   /* #F8FAFC - Slate 50 */
-    --sidebar-primary: 239 84% 67%;      /* #6366F1 - Indigo 500 */
+    /* Sidebar - IDENNA Navy + Orange */
+    --sidebar-background: 213 76% 26%; /* #103B73 */
+    --sidebar-foreground: 0 0% 100%;     /* white */
+    --sidebar-primary: 27 88% 53%;     /* #F2811D */
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 217 33% 17%;       /* #1E293B - Slate 800 */
-    --sidebar-accent-foreground: 239 84% 67%;
-    --sidebar-border: 215 25% 27%;       /* #334155 - Slate 700 */
-    --sidebar-ring: 239 84% 67%;
+    --sidebar-accent: 213 55% 20%;       /* darker navy */
+    --sidebar-accent-foreground: 27 88% 53%;
+    --sidebar-border: 213 40% 35%;
+    --sidebar-ring: 27 88% 53%;
 
     --radius: 0.5rem;
   }
 
   .dark {
-    /* Dark Mode - Deep Slate */
-    --background: 222 47% 11%;           /* #0F172A - Slate 900 */
-    --foreground: 210 40% 98%;           /* #F8FAFC - Slate 50 */
+    --background: 213 40% 10%;
+    --foreground: 0 0% 98%;
 
-    --card: 217 33% 17%;                 /* #1E293B - Slate 800 */
-    --card-foreground: 210 40% 98%;      /* #F8FAFC */
+    --card: 213 35% 14%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 217 33% 17%;              /* #1E293B */
-    --popover-foreground: 210 40% 98%;   /* #F8FAFC */
+    --popover: 213 35% 14%;
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 239 84% 67%;              /* #6366F1 - Indigo 500 */
-    --primary-foreground: 0 0% 100%;     /* #FFFFFF */
+    --primary: 213 76% 40%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 215 25% 27%;            /* #334155 - Slate 700 */
-    --secondary-foreground: 210 40% 98%; /* #F8FAFC */
+    --secondary: 213 55% 30%;
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 215 25% 27%;                /* #334155 - Slate 700 */
-    --muted-foreground: 215 20% 65%;     /* #94A3B8 - Slate 400 */
+    --muted: 213 30% 18%;
+    --muted-foreground: 0 0% 75%;
 
-    --accent: 239 84% 67%;               /* #6366F1 */
-    --accent-foreground: 0 0% 100%;      /* #FFFFFF */
+    --accent: 27 88% 53%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84% 60%;            /* #EF4444 */
-    --destructive-foreground: 0 0% 100%; /* #FFFFFF */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 215 25% 27%;               /* #334155 - Slate 700 */
-    --input: 215 25% 27%;                /* #334155 */
-    --ring: 239 84% 67%;                 /* #6366F1 */
+    --border: 213 30% 22%;
+    --input: 213 30% 22%;
+    --ring: 27 88% 53%;
 
-    --sidebar-background: 222 47% 11%;   /* #0F172A */
-    --sidebar-foreground: 210 40% 98%;   /* #F8FAFC */
-    --sidebar-primary: 239 84% 67%;      /* #6366F1 */
+    --sidebar-background: 213 76% 20%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 27 88% 53%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 217 33% 17%;       /* #1E293B */
-    --sidebar-accent-foreground: 239 84% 67%;
-    --sidebar-border: 215 25% 27%;       /* #334155 */
-    --sidebar-ring: 239 84% 67%;
+    --sidebar-accent: 213 60% 24%;
+    --sidebar-accent-foreground: 27 88% 53%;
+    --sidebar-border: 213 40% 32%;
+    --sidebar-ring: 27 88% 53%;
   }
 }
 
@@ -115,7 +114,7 @@
   }
 
   .glass-sidebar {
-    @apply backdrop-blur-sm bg-slate-900/95 border-r border-slate-800/50;
+    @apply bg-sidebar text-sidebar-foreground border-r border-sidebar-border;
   }
 }
 

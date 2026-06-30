@@ -10,7 +10,7 @@ import {
   LineChart, Line, PieChart, Pie, Cell,
 } from 'recharts';
 
-const COLORS = ['#2563eb', '#7c3aed', '#db2777', '#ea580c', '#16a34a', '#0891b2'];
+const COLORS = ['#103B73', '#F2811D', '#C8102E', '#2E7D32', '#F5B800', '#0891b2'];
 
 export default function DashboardPage() {
   const { user } = useDemoAuth();
@@ -26,7 +26,7 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Panel ejecutivo</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-[#103B73]">Panel ejecutivo</h1>
         <p className="text-muted-foreground">
           {user?.current_operativo?.name ?? 'Vista nacional'} — indicadores en tiempo real
         </p>

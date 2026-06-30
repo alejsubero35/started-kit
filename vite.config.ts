@@ -45,10 +45,10 @@ export default defineConfig(({ mode }) => ({
       },
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg', 'fonts.css'],
       manifest: {
-        name: 'SIRP-NNA',
+        name: 'SIRP-NNA · IDENNA',
         short_name: 'SIRP-NNA',
-        description: 'Sistema Integral de Registro y Protección de NNA',
-        theme_color: '#0B5FFF',
+        description: 'Sistema Integral de Registro y Protección de NNA — IDENNA',
+        theme_color: '#103B73',
         background_color: '#ffffff',
         display: 'standalone',
         orientation: 'portrait-primary',
@@ -57,9 +57,9 @@ export default defineConfig(({ mode }) => ({
         categories: ['business', 'productivity'],
         shortcuts: [
           {
-            name: 'Usuarios',
-            short_name: 'Usuarios',
-            url: './users',
+            name: 'Nuevo NNA',
+            short_name: 'Nuevo',
+            url: './nna/new',
             icons: [{ src: 'pwa-192x192.png', sizes: '192x192' }],
           },
         ],

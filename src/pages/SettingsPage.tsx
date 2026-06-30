@@ -43,7 +43,7 @@ export default function SettingsPage() {
                 <input
                   type="text"
                   className="w-full p-2 border rounded-md"
-                  defaultValue="CRM Dashboard"
+                  defaultValue="SIRP-NNA"
                 />
               </div>
               <div className="space-y-2">
@@ -51,7 +51,7 @@ export default function SettingsPage() {
                 <textarea
                   className="w-full p-2 border rounded-md"
                   rows={3}
-                  defaultValue="Sistema de gestión de clientes y ventas"
+                  defaultValue="Sistema Integral de Registro y Protección de Niños, Niñas y Adolescentes — IDENNA"
                 />
               </div>
             </div>
