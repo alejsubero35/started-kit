@@ -1,5 +1,13 @@
 import React from 'react';
-import { LayoutDashboard, Users, Settings, FileText, BarChart3, Package } from 'lucide-react';
+import {
+  LayoutDashboard,
+  MapPin,
+  Users,
+  BookOpen,
+  UserPlus,
+  Settings,
+  LogIn,
+} from 'lucide-react';
 
 export interface RouteConfig {
   id: string;
@@ -11,193 +19,136 @@ export interface RouteConfig {
   requiredRoles?: string[];
   children?: RouteConfig[];
   showInSidebar?: boolean;
-  badge?: string | number;
 }
 
-// Import components dynamically (lazy loading)
-const MasterDashboard = React.lazy(() => import('@/pages/MasterDashboard'));
-const UserCRUD = React.lazy(() => import('@/pages/UserCRUD'));
-const ProductCRUD = React.lazy(() => import('@/pages/ProductCRUD'));
-const Reports = React.lazy(() => import('@/pages/Reports'));
-const SettingsPage = React.lazy(() => import('@/pages/SettingsPage'));
-const NavigationSettings = React.lazy(() => import('@/pages/NavigationSettings'));
-const SalesReport = React.lazy(() => import('@/pages/reports/SalesReport'));
-const InventoryReport = React.lazy(() => import('@/pages/reports/InventoryReport'));
 const Login = React.lazy(() => import('@/features/auth/LoginPage'));
-const ClientesCRUD = React.lazy(() => import('@/pages/ClientesCRUD'));
-const ProveedoresCRUD = React.lazy(() => import('@/pages/ProveedoresCRUD'));
+const DashboardPage = React.lazy(() => import('@/pages/DashboardPage'));
+const OperativosPage = React.lazy(() => import('@/pages/operativos/OperativosPage'));
+const CatalogsPage = React.lazy(() => import('@/pages/catalogs/CatalogsPage'));
+const CatalogTypePage = React.lazy(() => import('@/pages/catalogs/CatalogTypePage'));
+const NnaListPage = React.lazy(() => import('@/pages/nna/NnaListPage'));
+const NnaWizardPage = React.lazy(() => import('@/pages/nna/NnaWizardPage'));
+const SettingsPage = React.lazy(() => import('@/pages/SettingsPage'));
 const NotFound = React.lazy(() => import('@/pages/NotFound'));
 const Unauthorized = React.lazy(() => import('@/pages/Unauthorized'));
 
 export const routeConfig: RouteConfig[] = [
-  // Public routes
   {
     id: 'login',
     path: '/login',
     label: 'Login',
-    icon: Users,
+    icon: LogIn,
     component: Login,
     isPublic: true,
     showInSidebar: false,
   },
-  
-  // Protected routes
   {
     id: 'dashboard',
     path: '/dashboard',
-    label: 'Dashboard',
+    label: 'Inicio',
     icon: LayoutDashboard,
-    component: MasterDashboard,
+    component: DashboardPage,
     showInSidebar: true,
   },
-  
   {
-    id: 'users',
-    path: '/users',
-    label: 'Usuarios',
+    id: 'operativos',
+    path: '/operativos',
+    label: 'Operativos',
+    icon: MapPin,
+    component: OperativosPage,
+    requiredRoles: ['super-admin', 'admin-nacional'],
+    showInSidebar: true,
+  },
+  {
+    id: 'nna',
+    path: '/nna',
+    label: 'Registro NNA',
     icon: Users,
-    component: UserCRUD,
-    requiredRoles: ['admin'],
-    showInSidebar: true,
-  },
-  
-  {
-    id: 'products',
-    path: '/products',
-    label: 'Productos',
-    icon: Package,
-    component: ProductCRUD,
+    component: NnaListPage,
+    requiredRoles: ['super-admin', 'admin-nacional', 'coordinador-estatal', 'registrador', 'consultor'],
     showInSidebar: true,
   },
   {
-    id: 'proveedores',
-    path: '/proveedores',
-    label: 'Lista Proveedores',
-    icon: Package,
-    component: ProveedoresCRUD,
+    id: 'nna-new',
+    path: '/nna/new',
+    label: 'Nuevo NNA',
+    icon: UserPlus,
+    component: NnaWizardPage,
+    requiredRoles: ['super-admin', 'admin-nacional', 'coordinador-estatal', 'registrador'],
     showInSidebar: true,
   },
   {
-    id: 'clientes',
-    path: '/clientes',
-    label: 'Lista de Clientes',
-    icon: Package,
-    component: ClientesCRUD,
+    id: 'catalogs',
+    path: '/catalogs',
+    label: 'Catálogos',
+    icon: BookOpen,
+    component: CatalogsPage,
+    requiredRoles: ['super-admin', 'admin-nacional'],
     showInSidebar: true,
   },
-  
   {
-    id: 'reports',
-    path: '/reports',
-    label: 'Reportes',
-    icon: BarChart3,
-    component: Reports,
-    showInSidebar: true,
-    children: [
-      {
-        id: 'sales-report',
-        path: '/reports/sales',
-        label: 'Ventas',
-        icon: FileText,
-        component: SalesReport,
-        showInSidebar: true,
-      },
-      {
-        id: 'inventory-report',
-        path: '/reports/inventory',
-        label: 'Inventario',
-        icon: Package,
-        component: InventoryReport,
-        showInSidebar: true,
-      },
-    ],
+    id: 'catalog-type',
+    path: '/catalogs/:type',
+    label: 'Catálogo',
+    icon: BookOpen,
+    component: CatalogTypePage,
+    requiredRoles: ['super-admin', 'admin-nacional'],
+    showInSidebar: false,
   },
-  
   {
     id: 'settings',
     path: '/settings',
     label: 'Configuración',
     icon: Settings,
     component: SettingsPage,
-    requiredRoles: ['admin'],
+    requiredRoles: ['super-admin', 'admin-nacional'],
     showInSidebar: true,
-    children: [
-      {
-        id: 'navigation-settings',
-        path: '/settings/navigation',
-        label: 'Navegación Mobile',
-        icon: Settings,
-        component: NavigationSettings,
-        showInSidebar: true,
-      },
-    ],
   },
-  
-  // Error routes
-  {
-    id: 'not-found',
-    path: '*',
-    label: 'Not Found',
-    icon: FileText,
-    component: NotFound,
-    isPublic: true,
-    showInSidebar: false,
-  },
-  
   {
     id: 'unauthorized',
     path: '/unauthorized',
     label: 'Unauthorized',
-    icon: FileText,
+    icon: Settings,
     component: Unauthorized,
+    isPublic: true,
+    showInSidebar: false,
+  },
+  {
+    id: 'not-found',
+    path: '*',
+    label: 'Not Found',
+    icon: Settings,
+    component: NotFound,
     isPublic: true,
     showInSidebar: false,
   },
 ];
 
-// Helper functions
-export const getPublicRoutes = () => {
-  return routeConfig.filter(route => route.isPublic);
-};
+export const getPublicRoutes = () => routeConfig.filter((r) => r.isPublic);
+export const getProtectedRoutes = () => routeConfig.filter((r) => !r.isPublic);
 
-export const getProtectedRoutes = () => {
-  return routeConfig.filter(route => !route.isPublic);
-};
-
-export const getSidebarRoutes = (userRoles: string[] = []) => {
-  return routeConfig.filter(route => {
+export const getSidebarRoutes = (userRoles: string[] = []) =>
+  routeConfig.filter((route) => {
     if (!route.showInSidebar) return false;
-    if (route.requiredRoles && route.requiredRoles.length > 0) {
-      return route.requiredRoles.some(role => userRoles.includes(role));
-    }
-    return true;
+    if (!route.requiredRoles?.length) return true;
+    return route.requiredRoles.some((role) => userRoles.includes(role));
   });
-};
 
-export const getRouteByPath = (path: string): RouteConfig | undefined => {
-  return routeConfig.find(route => route.path === path);
-};
+export const getRouteByPath = (path: string) => routeConfig.find((r) => r.path === path);
 
 export const hasRouteAccess = (route: RouteConfig, userRoles: string[] = []): boolean => {
   if (route.isPublic) return true;
-  if (!route.requiredRoles || route.requiredRoles.length === 0) return true;
-  return route.requiredRoles.some(role => userRoles.includes(role));
+  if (!route.requiredRoles?.length) return true;
+  return route.requiredRoles.some((role) => userRoles.includes(role));
 };
 
 export const flattenRoutes = (routes: RouteConfig[]): RouteConfig[] => {
-  const flattened: RouteConfig[] = [];
-  
-  routes.forEach(route => {
-    flattened.push(route);
-    if (route.children) {
-      flattened.push(...flattenRoutes(route.children));
-    }
+  const flat: RouteConfig[] = [];
+  routes.forEach((route) => {
+    flat.push(route);
+    if (route.children) flat.push(...flattenRoutes(route.children));
   });
-  
-  return flattened;
+  return flat;
 };
 
-// Get all routes in flat format for React Router
-export const getAllRoutes = (): RouteConfig[] => {
-  return flattenRoutes(routeConfig);
-};
+export const getAllRoutes = (): RouteConfig[] => flattenRoutes(routeConfig);

@@ -6,7 +6,6 @@ import { Sonner } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { UIProvider } from '@/contexts/UIContext';
 import { DemoAuthProvider } from '@/features/auth/DemoAuthContext';
-import { NavigationConfigProvider } from '@/contexts/NavigationConfigContext';
 import { OfflineProvider } from '@/offline/providers/OfflineProvider';
 import { AppRoutes } from '@/routes/AppRoutes';
 
@@ -16,15 +15,12 @@ function getRouterBasename(): string | undefined {
   return base.replace(/\/$/, '');
 }
 
-const routerBasename = getRouterBasename();
-
-// Create a client for React Query
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 1,
       refetchOnWindowFocus: false,
-      staleTime: 5 * 60 * 1000, // 5 minutes
+      staleTime: 5 * 60 * 1000,
     },
   },
 });
@@ -33,17 +29,15 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <BrowserRouter basename={routerBasename}>
+        <BrowserRouter basename={getRouterBasename()}>
           <UIProvider>
-            <NavigationConfigProvider>
-              <DemoAuthProvider>
-                <OfflineProvider>
-                  <AppRoutes />
-                  <Toaster />
-                  <Sonner />
-                </OfflineProvider>
-              </DemoAuthProvider>
-            </NavigationConfigProvider>
+            <DemoAuthProvider>
+              <OfflineProvider>
+                <AppRoutes />
+                <Toaster />
+                <Sonner />
+              </OfflineProvider>
+            </DemoAuthProvider>
           </UIProvider>
         </BrowserRouter>
       </TooltipProvider>

@@ -45,9 +45,9 @@ export default defineConfig(({ mode }) => ({
       },
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg', 'fonts.css'],
       manifest: {
-        name: 'Started Kit',
-        short_name: 'Started',
-        description: 'Boilerplate administrativo offline-first',
+        name: 'SIRP-NNA',
+        short_name: 'SIRP-NNA',
+        description: 'Sistema Integral de Registro y Protección de NNA',
         theme_color: '#0B5FFF',
         background_color: '#ffffff',
         display: 'standalone',

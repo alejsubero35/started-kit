@@ -51,14 +51,19 @@ class ErrorBoundary extends React.Component<
 
 export function AppRoutes() {
   const { isAuthenticated, user } = useDemoAuth();
-  const userRoles = user?.roles || [];
+  const roles = Array.isArray(user?.roles)
+    ? (user.roles as string[])
+    : typeof user?.roles === 'string'
+      ? [user.roles]
+      : [];
+
   const allRoutes = getAllRoutes();
 
   const renderRoute = (routeConfig: any) => {
     const { component: Component, path, isPublic, requiredRoles } = routeConfig;
     
     // Check if user has access to this route
-    const hasAccess = hasRouteAccess(routeConfig, userRoles);
+    const hasAccess = hasRouteAccess(routeConfig, roles);
     
     // If route requires authentication and user is not authenticated
     if (!isPublic && !isAuthenticated) {

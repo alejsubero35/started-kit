@@ -1,16 +1,24 @@
 import { createContext } from 'react';
 
+export interface OperativoSummary {
+  id: number;
+  uuid: string;
+  code: string;
+  name: string;
+  type?: string;
+  status?: string;
+}
+
 export interface User {
-  id: string;
-  username: string;
-  email: string;
+  id: number | string;
   name?: string;
-  first_name?: string;
-  last_name?: string;
-  roles?: string; // Role slug (e.g. 'super-admin', 'admin', 'cashier')
-  plan?: string;
-  features?: Record<string, boolean> | string[]; // Features can be a list of strings or key-value pairs
-  branch_id?: number | null; // Assigned branch for POS restriction
+  email: string;
+  phone?: string | null;
+  organization?: string | null;
+  is_active?: boolean;
+  roles?: string[];
+  permissions?: string[];
+  current_operativo?: OperativoSummary | null;
 }
 
 export interface AuthContextType {
