@@ -10,6 +10,14 @@ import { NavigationConfigProvider } from '@/contexts/NavigationConfigContext';
 import { OfflineProvider } from '@/offline/providers/OfflineProvider';
 import { AppRoutes } from '@/routes/AppRoutes';
 
+function getRouterBasename(): string | undefined {
+  const base = import.meta.env.BASE_URL;
+  if (!base || base === './' || base === '/') return undefined;
+  return base.replace(/\/$/, '');
+}
+
+const routerBasename = getRouterBasename();
+
 // Create a client for React Query
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -25,7 +33,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <BrowserRouter>
+        <BrowserRouter basename={routerBasename}>
           <UIProvider>
             <NavigationConfigProvider>
               <DemoAuthProvider>

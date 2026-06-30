@@ -22,19 +22,51 @@ if (self.workbox) {
   workbox.core.clientsClaim();
   console.debug('SW: workbox configured skipWaiting+clientsClaim');
 
-  // Combine injected manifest with our offline page
-  const precacheManifest = (self.__WB_MANIFEST || []).concat([{ url: BASE + 'offline.html', revision: '1' }]);
+  // Precache build assets (JS/CSS/HTML) injected by VitePWA + offline shell
+  const precacheManifest = self.__WB_MANIFEST.concat([
+    { url: BASE + 'offline.html', revision: '1' },
+    { url: BASE + 'fonts.css', revision: '1' },
+  ]);
   workbox.precaching.precacheAndRoute(precacheManifest);
 
-  // Navigation route fallback for SPA: serve index.html (precache) and fallback to offline.html
+  // Navigation: network first, fallback to cached SPA shell
   try {
     const indexCacheKey = workbox.precaching.getCacheKeyForURL(BASE + 'index.html');
-    workbox.routing.registerNavigationRoute(indexCacheKey || (BASE + 'offline.html'));
+    workbox.routing.registerNavigationRoute(indexCacheKey || BASE + 'index.html', {
+      blacklist: [/^\/api\//],
+    });
   } catch (e) {
-    // If something fails, still try a generic navigation handler below
+    // handled by fallback below
   }
 
-  // Runtime caching for Google Fonts and common CDNs
+  // Runtime cache: JS, CSS, fonts and /assets/ bundles (CacheFirst)
+  workbox.routing.registerRoute(
+    ({ request, url }) => {
+      const sameOrigin = url.origin === self.location.origin;
+      const isStaticAsset =
+        request.destination === 'script' ||
+        request.destination === 'style' ||
+        request.destination === 'font' ||
+        request.destination === 'worker' ||
+        /\.(?:js|mjs|css|woff2?)$/i.test(url.pathname) ||
+        url.pathname.includes('/assets/');
+      return sameOrigin && isStaticAsset;
+    },
+    new workbox.strategies.CacheFirst({
+      cacheName: 'app-static-assets',
+      plugins: [
+        new workbox.expiration.ExpirationPlugin({
+          maxEntries: 200,
+          maxAgeSeconds: 60 * 60 * 24 * 365,
+        }),
+        new workbox.cacheableResponse.CacheableResponsePlugin({
+          statuses: [0, 200],
+        }),
+      ],
+    }),
+  );
+
+  // Runtime cache: Google Fonts and common CDNs
   workbox.routing.registerRoute(
     ({url}) => url.origin.includes('fonts.googleapis.com') || url.origin.includes('fonts.gstatic.com'),
     new workbox.strategies.CacheFirst({
@@ -66,11 +98,38 @@ if (self.workbox) {
     event.waitUntil(self.clients.claim());
   });
 
-  // Basic navigation fallback
+  // Basic navigation + static asset fallback when Workbox CDN is unavailable
   self.addEventListener('fetch', (event) => {
-    if (event.request.mode === 'navigate') {
+    const { request } = event;
+    if (request.method !== 'GET') return;
+
+    const url = new URL(request.url);
+    const isStaticAsset =
+      request.destination === 'script' ||
+      request.destination === 'style' ||
+      request.destination === 'font' ||
+      /\.(?:js|mjs|css|woff2?)$/i.test(url.pathname) ||
+      url.pathname.includes('/assets/');
+
+    if (request.mode === 'navigate') {
       event.respondWith(
-        fetch(event.request).catch(() => caches.match(BASE + 'offline.html'))
+        fetch(request).catch(() => caches.match(BASE + 'index.html').then((r) => r || caches.match(BASE + 'offline.html'))),
+      );
+      return;
+    }
+
+    if (isStaticAsset) {
+      event.respondWith(
+        caches.open('app-static-assets-fallback').then((cache) =>
+          cache.match(request).then(
+            (cached) =>
+              cached ||
+              fetch(request).then((response) => {
+                if (response.ok) cache.put(request, response.clone());
+                return response;
+              }),
+          ),
+        ),
       );
     }
   });
@@ -228,15 +287,6 @@ self.addEventListener('message', (event) => {
           client.postMessage({ type: 'offline:triggerSync' });
         }
       })()
-    );
-  }
-});
-
-// Also add a safe fetch handler to return offline page for navigations when Workbox didn't register navigation route
-self.addEventListener('fetch', (event) => {
-  if (event.request.mode === 'navigate') {
-    event.respondWith(
-      fetch(event.request).catch(() => caches.match(BASE + 'offline.html'))
     );
   }
 });

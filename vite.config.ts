@@ -37,9 +37,13 @@ export default defineConfig(({ mode }) => ({
       injectManifest: {
         swSrc: 'public/sw.js',
         swDest: 'dist/sw.js',
-        injectionPoint: undefined
+        globPatterns: [
+          '**/*.{js,css,html,ico,png,svg,woff,woff2,webmanifest}',
+          'fonts.css',
+        ],
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
       },
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg', 'fonts.css'],
       manifest: {
         name: 'Started Kit',
         short_name: 'Started',
@@ -78,54 +82,16 @@ export default defineConfig(({ mode }) => ({
           }
         ]
       },
-      workbox: {
-        runtimeCaching: [
-          {
-            urlPattern: ({ request }) => request.destination === 'document',
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'html-cache',
-              networkTimeoutSeconds: 5,
-            },
-          },
-          {
-            urlPattern: ({ request }) =>
-              ['style', 'script', 'font'].includes(request.destination),
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'static-assets-cache',
-            },
-          },
-          {
-            urlPattern: ({ url }) => url.pathname.startsWith('/api') || url.hostname.includes('api'),
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'api-get-cache',
-              expiration: {
-                maxEntries: 100,
-                maxAgeSeconds: 60 * 60 * 24,
-              },
-              networkTimeoutSeconds: 10,
-            },
-          },
-          {
-            urlPattern: ({ request }) => request.destination === 'image',
-            handler: 'StaleWhileRevalidate',
-            options: {
-              cacheName: 'images-cache',
-              expiration: {
-                maxEntries: 80,
-                maxAgeSeconds: 60 * 60 * 24 * 30,
-              },
-            },
-          },
-        ],
-      },
       devOptions: {
         enabled: true,
       },
     }),
   ],
+  preview: {
+    port: 4173,
+    strictPort: true,
+    open: '/app/',
+  },
   resolve: {
     alias: {
       // Use process.cwd() to avoid __dirname in ESM configs
