@@ -72,6 +72,22 @@ function normalizePaginatedResponse<T>(raw: LaravelPaginated<T>): PaginatedRespo
 
 const OFFLINE_QUEUE_KEY = 'sirp_nna_offline_queue';
 
+export const NNA_OFFLINE_QUEUE_CHANGED = 'sirp:nnaQueueChanged';
+
+function notifyOfflineQueueChanged(): void {
+  if (typeof window === 'undefined') return;
+  window.dispatchEvent(new CustomEvent(NNA_OFFLINE_QUEUE_CHANGED));
+}
+
+export function getNnaOfflinePendingCount(): number {
+  if (typeof window === 'undefined') return 0;
+  try {
+    return JSON.parse(localStorage.getItem(OFFLINE_QUEUE_KEY) || '[]').length;
+  } catch {
+    return 0;
+  }
+}
+
 export const nnaService = {
   async listPaginated(
     params?: PaginationParams & { operativo_id?: number },
@@ -111,6 +127,7 @@ export const nnaService = {
     const queue = this.getOfflineQueue();
     queue.push({ ...record, local_uuid: record.local_uuid ?? crypto.randomUUID() });
     localStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(queue));
+    notifyOfflineQueueChanged();
   },
 
   getOfflineQueue(): NnaRecord[] {
@@ -123,6 +140,7 @@ export const nnaService = {
 
   clearOfflineQueue(): void {
     localStorage.removeItem(OFFLINE_QUEUE_KEY);
+    notifyOfflineQueueChanged();
   },
 
   async flushOfflineQueue(): Promise<number> {

@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import {
   LayoutDashboard,
   MapPin,
@@ -13,6 +13,21 @@ import {
   UserCircle,
 } from 'lucide-react';
 
+import LoginPage from '@/features/auth/LoginPage';
+import DashboardPage from '@/pages/DashboardPage';
+import OperativosPage from '@/pages/operativos/OperativosPage';
+import UsersPage from '@/pages/users/UsersPage';
+import NnaListPage from '@/pages/nna/NnaListPage';
+import NnaWizardPage from '@/pages/nna/NnaWizardPage';
+import CatalogsPage from '@/pages/catalogs/CatalogsPage';
+import CatalogTypePage from '@/pages/catalogs/CatalogTypePage';
+import ImportPage from '@/pages/imports/ImportPage';
+import ReportsPage from '@/pages/reports/ReportsPage';
+import ProfilePage from '@/pages/profile/ProfilePage';
+import SettingsPage from '@/pages/SettingsPage';
+import NotFound from '@/pages/NotFound';
+import Unauthorized from '@/pages/Unauthorized';
+
 export interface RouteConfig {
   id: string;
   path: string;
@@ -25,28 +40,13 @@ export interface RouteConfig {
   showInSidebar?: boolean;
 }
 
-const Login = React.lazy(() => import('@/features/auth/LoginPage'));
-const DashboardPage = React.lazy(() => import('@/pages/DashboardPage'));
-const OperativosPage = React.lazy(() => import('@/pages/operativos/OperativosPage'));
-const CatalogsPage = React.lazy(() => import('@/pages/catalogs/CatalogsPage'));
-const CatalogTypePage = React.lazy(() => import('@/pages/catalogs/CatalogTypePage'));
-const NnaListPage = React.lazy(() => import('@/pages/nna/NnaListPage'));
-const NnaWizardPage = React.lazy(() => import('@/pages/nna/NnaWizardPage'));
-const SettingsPage = React.lazy(() => import('@/pages/SettingsPage'));
-const ImportPage = React.lazy(() => import('@/pages/imports/ImportPage'));
-const ReportsPage = React.lazy(() => import('@/pages/reports/ReportsPage'));
-const UsersPage = React.lazy(() => import('@/pages/users/UsersPage'));
-const ProfilePage = React.lazy(() => import('@/pages/profile/ProfilePage'));
-const NotFound = React.lazy(() => import('@/pages/NotFound'));
-const Unauthorized = React.lazy(() => import('@/pages/Unauthorized'));
-
 export const routeConfig: RouteConfig[] = [
   {
     id: 'login',
     path: '/login',
     label: 'Login',
     icon: LogIn,
-    component: Login,
+    component: LoginPage,
     isPublic: true,
     showInSidebar: false,
   },

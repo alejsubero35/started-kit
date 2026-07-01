@@ -24,8 +24,9 @@ import { KpiCard } from '@/components/ui/KpiCard';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { useDemoAuth } from '@/features/auth/DemoAuthContext';
-import { nnaService, type NnaListItem } from '@/services/nna.service';
+import { nnaService, NNA_OFFLINE_QUEUE_CHANGED, type NnaListItem } from '@/services/nna.service';
 import { dashboardService, reportsService } from '@/services/reports.service';
+import { subscribeOfflineEvent } from '@/offline/services/offline-events';
 
 function formatDate(iso?: string) {
   if (!iso) return '—';
@@ -43,8 +44,16 @@ function formatDate(iso?: string) {
 export default function NnaListPage() {
   const { user } = useDemoAuth();
   const operativoId = user?.current_operativo?.id;
-  const offlineCount = nnaService.getOfflineQueue().length;
+  const [offlineCount, setOfflineCount] = useState(() => nnaService.getOfflineQueue().length);
   const [exporting, setExporting] = useState<'xlsx' | 'csv' | null>(null);
+
+  useEffect(() => {
+    const refreshOfflineCount = () => {
+      setOfflineCount(nnaService.getOfflineQueue().length);
+    };
+    window.addEventListener(NNA_OFFLINE_QUEUE_CHANGED, refreshOfflineCount);
+    return () => window.removeEventListener(NNA_OFFLINE_QUEUE_CHANGED, refreshOfflineCount);
+  }, []);
 
   const table = useDataTableQuery<NnaListItem>({
     queryKey: ['nna', operativoId],
@@ -71,16 +80,19 @@ export default function NnaListPage() {
   });
 
   useEffect(() => {
-    const sync = async () => {
-      const count = await nnaService.flushOfflineQueue();
-      if (count > 0) {
-        toast.success(`${count} registro(s) sincronizado(s)`);
-        void table.refetch();
-      }
+    const refetchTable = () => {
+      void table.refetch();
     };
-    window.addEventListener('online', sync);
-    void sync();
-    return () => window.removeEventListener('online', sync);
+    const unsubSync = subscribeOfflineEvent('syncCompleted', (detail) => {
+      if ((detail?.synced ?? 0) > 0) {
+        refetchTable();
+      }
+    });
+    window.addEventListener(NNA_OFFLINE_QUEUE_CHANGED, refetchTable);
+    return () => {
+      unsubSync();
+      window.removeEventListener(NNA_OFFLINE_QUEUE_CHANGED, refetchTable);
+    };
   }, [table.refetch]);
 
   const kpis = stats?.kpis;

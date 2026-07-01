@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 
+import { NNA_OFFLINE_QUEUE_CHANGED } from '@/services/nna.service';
 import { subscribeOfflineEvent } from '../services/offline-events';
 
 export function useOfflineEventRefresh(refresh: () => Promise<void>) {
@@ -22,8 +23,11 @@ export function useOfflineEventRefresh(refresh: () => Promise<void>) {
       subscribeOfflineEvent('syncFailed', () => void refresh()),
     ];
 
+    window.addEventListener(NNA_OFFLINE_QUEUE_CHANGED, scheduleRefresh);
+
     return () => {
       unsubscribers.forEach((unsub) => unsub());
+      window.removeEventListener(NNA_OFFLINE_QUEUE_CHANGED, scheduleRefresh);
       if (debounceTimer) clearTimeout(debounceTimer);
     };
   }, [refresh]);

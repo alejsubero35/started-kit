@@ -151,12 +151,18 @@ async function processQueueItem(
   }
 }
 
-export async function processSyncQueue(): Promise<{ synced: number; failed: number }> {
+export async function processSyncQueue(options?: {
+  manageLifecycle?: boolean;
+}): Promise<{ synced: number; failed: number }> {
+  const manageLifecycle = options?.manageLifecycle !== false;
+
   if (isProcessing) return { synced: 0, failed: 0 };
   if (!isBrowserOnline()) return { synced: 0, failed: 0 };
 
   isProcessing = true;
-  await setSyncMetadata({ isSyncing: true, lastSyncError: null });
+  if (manageLifecycle) {
+    await setSyncMetadata({ isSyncing: true, lastSyncError: null });
+  }
 
   let synced = 0;
   let failed = 0;
@@ -165,35 +171,44 @@ export async function processSyncQueue(): Promise<{ synced: number; failed: numb
     const pending = await getPendingOperations();
     const total = pending.length;
 
-    emitOfflineEvent('syncStarted', { total });
-    emitOfflineEvent('syncProgress', { current: 0, total });
+    if (manageLifecycle) {
+      emitOfflineEvent('syncStarted', { total });
+      emitOfflineEvent('syncProgress', { current: 0, total });
+    }
 
     for (let index = 0; index < pending.length; index++) {
       const item = pending[index];
       if (!isBrowserOnline()) break;
 
-      emitOfflineEvent('syncProgress', { current: index, total });
+      if (manageLifecycle) {
+        emitOfflineEvent('syncProgress', { current: index, total });
+      }
 
       const ok = await processQueueItem(item);
       if (ok) synced += 1;
       else if (item.retryCount >= DEFAULT_RETRY_POLICY.maxRetries) failed += 1;
 
-      emitOfflineEvent('syncProgress', { current: index + 1, total });
+      if (manageLifecycle) {
+        emitOfflineEvent('syncProgress', { current: index + 1, total });
+      }
     }
 
-    await setSyncMetadata({
-      isSyncing: false,
-      lastSyncAt: new Date().toISOString(),
-      lastSyncError: failed > 0 ? `${failed} operación(es) fallida(s)` : null,
-    });
-
-    emitOfflineEvent('syncCompleted', { synced, failed });
+    if (manageLifecycle) {
+      await setSyncMetadata({
+        isSyncing: false,
+        lastSyncAt: new Date().toISOString(),
+        lastSyncError: failed > 0 ? `${failed} operación(es) fallida(s)` : null,
+      });
+      emitOfflineEvent('syncCompleted', { synced, failed });
+    }
 
     return { synced, failed };
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Error inesperado';
-    await setSyncMetadata({ isSyncing: false, lastSyncError: message });
-    emitOfflineEvent('syncFailed', { error: message });
+    if (manageLifecycle) {
+      await setSyncMetadata({ isSyncing: false, lastSyncError: message });
+      emitOfflineEvent('syncFailed', { error: message });
+    }
     return { synced, failed };
   } finally {
     isProcessing = false;
@@ -226,7 +241,6 @@ export async function registerBackgroundSync(): Promise<void> {
 export function initSyncListeners(): () => void {
   const handleOnline = () => {
     emitOfflineEvent('online');
-    void processSyncQueue();
   };
 
   const handleOffline = () => emitOfflineEvent('offline');

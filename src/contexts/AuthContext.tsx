@@ -101,6 +101,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     queryClient.removeQueries({ queryKey: ['user', 'context'] });
     apiService.clearToken();
     localStorage.removeItem(STORAGE_USER_KEY);
+    resetApiBaseFromEnv();
     setUser(null);
     toast({ title: 'Sesión cerrada', description: 'Has cerrado sesión' });
     navigate('/login');

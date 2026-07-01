@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Check, ClipboardCheck, MapPin, Palette, Shield, User, Users } from 'lucide-react';
 import { catalogsService } from '@/services/catalogs.service';
-import { geographyService } from '@/services/geography.service';
+import { geographyService, getEstadosFromBundle, getMunicipiosFromBundle, getParroquiasFromBundle } from '@/services/geography.service';
 import { operativosService } from '@/services/operativos.service';
 import { nnaService, type NnaRecord } from '@/services/nna.service';
 import { useDemoAuth } from '@/features/auth/DemoAuthContext';
@@ -19,7 +19,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { calculateAgeFromBirthDate } from '@/lib/age';
-import { toast } from 'sonner';
+import { toast } from '@/hooks/use-toast';
 
 const optionalNumber = z.preprocess(
   (v) => (v === '' || v === null || v === undefined ? undefined : Number(v)),
@@ -325,31 +325,32 @@ export default function NnaWizardPage() {
   const { data: catalogBundle = {} } = useQuery({
     queryKey: ['catalog-bundle'],
     queryFn: () => catalogsService.getBundle(),
+    staleTime: 1000 * 60 * 60 * 24,
+    networkMode: 'always',
   });
-  const { data: estados = [] } = useQuery({
-    queryKey: ['estados'],
-    queryFn: () => geographyService.getEstados(),
+  const { data: geographyBundle = [] } = useQuery({
+    queryKey: ['geography-bundle'],
+    queryFn: () => geographyService.getGeographyBundle(),
+    staleTime: 1000 * 60 * 60 * 24,
+    networkMode: 'always',
   });
-  const { data: municipios = [] } = useQuery({
-    queryKey: ['municipios', estadoId],
-    queryFn: () => geographyService.getMunicipios(Number(estadoId)),
-    enabled: !!estadoId,
-  });
-  const { data: parroquias = [] } = useQuery({
-    queryKey: ['parroquias', municipioId],
-    queryFn: () => geographyService.getParroquias(Number(municipioId)),
-    enabled: !!municipioId,
-  });
-  const { data: acompMunicipios = [] } = useQuery({
-    queryKey: ['municipios-acomp', acompEstadoId],
-    queryFn: () => geographyService.getMunicipios(Number(acompEstadoId)),
-    enabled: !!acompEstadoId,
-  });
-  const { data: acompParroquias = [] } = useQuery({
-    queryKey: ['parroquias-acomp', acompMunicipioId],
-    queryFn: () => geographyService.getParroquias(Number(acompMunicipioId)),
-    enabled: !!acompMunicipioId,
-  });
+  const estados = useMemo(() => getEstadosFromBundle(geographyBundle), [geographyBundle]);
+  const municipios = useMemo(
+    () => getMunicipiosFromBundle(geographyBundle, Number(estadoId)),
+    [geographyBundle, estadoId],
+  );
+  const parroquias = useMemo(
+    () => getParroquiasFromBundle(geographyBundle, Number(municipioId)),
+    [geographyBundle, municipioId],
+  );
+  const acompMunicipios = useMemo(
+    () => getMunicipiosFromBundle(geographyBundle, Number(acompEstadoId)),
+    [geographyBundle, acompEstadoId],
+  );
+  const acompParroquias = useMemo(
+    () => getParroquiasFromBundle(geographyBundle, Number(acompMunicipioId)),
+    [geographyBundle, acompMunicipioId],
+  );
 
   const operativoId = user?.current_operativo?.id ?? (Array.isArray(operativos) ? operativos[0]?.id : undefined);
   const operativoName = user?.current_operativo?.name
@@ -419,7 +420,7 @@ export default function NnaWizardPage() {
 
   const goNext = async () => {
     if (!(await validateCurrentStep())) {
-      toast.error('Complete los campos requeridos antes de continuar');
+      toast({ variant: 'destructive', title: 'Complete los campos requeridos antes de continuar' });
       return;
     }
     setStep((s) => Math.min(s + 1, visibleSteps.length - 1));
@@ -497,7 +498,7 @@ export default function NnaWizardPage() {
   const onSubmit = async (data: FormData) => {
     const activeOperativoId = existingRecord?.operativo_id ?? operativoId;
     if (!activeOperativoId) {
-      toast.error('No hay operativo activo asignado');
+      toast({ variant: 'destructive', title: 'No hay operativo activo asignado' });
       return;
     }
 
@@ -510,25 +511,33 @@ export default function NnaWizardPage() {
       if (navigator.onLine) {
         if (isEditing && editId) {
           await nnaService.update(editId, payload);
-          toast.success('Registro NNA actualizado');
+          toast({ variant: 'success', title: 'Registro NNA actualizado' });
         } else {
           await nnaService.create(payload);
-          toast.success('Registro NNA guardado y sincronizado');
+          toast({ variant: 'success', title: 'Registro NNA guardado y sincronizado' });
         }
       } else if (isEditing) {
-        toast.error('La edición requiere conexión a internet');
+        toast({ variant: 'destructive', title: 'La edición requiere conexión a internet' });
         return;
       } else {
         nnaService.queueOffline(payload);
-        toast.success('Registro guardado offline. Se sincronizará al reconectar.');
+        toast({
+          variant: 'success',
+          title: 'Registro guardado offline',
+          description: 'Se sincronizará al reconectar.',
+        });
       }
       navigate('/nna');
     } catch {
       if (isEditing) {
-        toast.error('No se pudo actualizar el registro');
+        toast({ variant: 'destructive', title: 'No se pudo actualizar el registro' });
       } else {
         nnaService.queueOffline(payload);
-        toast.warning('Error de red. Registro guardado en cola offline.');
+        toast({
+          variant: 'success',
+          title: 'Registro guardado offline',
+          description: 'Error de red. Se sincronizará al reconectar.',
+        });
         navigate('/nna');
       }
     } finally {
@@ -538,7 +547,7 @@ export default function NnaWizardPage() {
 
   const handleSave = () => {
     void form.handleSubmit(onSubmit, () => {
-      toast.error('Revise los campos marcados antes de guardar');
+      toast({ variant: 'destructive', title: 'Revise los campos marcados antes de guardar' });
     })();
   };
 

@@ -1,5 +1,5 @@
-import React, { Suspense } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import React, { Suspense, useState } from 'react';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useDemoAuth } from '@/features/auth/DemoAuthContext';
 import { getAllRoutes, hasRouteAccess } from '@/config/routes';
 import { MainLayout } from '@/components/Layout/MainLayout';
@@ -15,10 +15,10 @@ const RouteLoadingFallback = () => (
 
 // Error boundary component
 class ErrorBoundary extends React.Component<
-  { children: React.ReactNode },
+  { children: React.ReactNode; onRetry?: () => void },
   { hasError: boolean; error?: Error }
 > {
-  constructor(props: { children: React.ReactNode }) {
+  constructor(props: { children: React.ReactNode; onRetry?: () => void }) {
     super(props);
     this.state = { hasError: false };
   }
@@ -31,22 +31,48 @@ class ErrorBoundary extends React.Component<
     console.error('Route error:', error, errorInfo);
   }
 
+  handleRetry = () => {
+    this.setState({ hasError: false, error: undefined });
+    this.props.onRetry?.();
+  };
+
   render() {
     if (this.state.hasError) {
       return (
-        <div className="flex flex-col items-center justify-center min-h-[400px] p-4">
+        <div className="flex flex-col items-center justify-center min-h-[400px] p-4 gap-4">
           <h2 className="text-2xl font-semibold text-destructive mb-2">
             Something went wrong
           </h2>
           <p className="text-muted-foreground text-center">
             {this.state.error?.message || 'An unexpected error occurred'}
           </p>
+          <button
+            type="button"
+            onClick={this.handleRetry}
+            className="px-4 py-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90"
+          >
+            Reintentar
+          </button>
         </div>
       );
     }
 
     return this.props.children;
   }
+}
+
+function RouteErrorBoundary({ children }: { children: React.ReactNode }) {
+  const location = useLocation();
+  const [retryKey, setRetryKey] = useState(0);
+
+  return (
+    <ErrorBoundary
+      key={`${location.pathname}-${retryKey}`}
+      onRetry={() => setRetryKey((k) => k + 1)}
+    >
+      {children}
+    </ErrorBoundary>
+  );
 }
 
 export function AppRoutes() {
@@ -94,11 +120,11 @@ export function AppRoutes() {
           key={path}
           path={path}
           element={
-            <ErrorBoundary>
+            <RouteErrorBoundary>
               <Suspense fallback={<RouteLoadingFallback />}>
                 <Component />
               </Suspense>
-            </ErrorBoundary>
+            </RouteErrorBoundary>
           }
         />
       );
@@ -112,11 +138,11 @@ export function AppRoutes() {
         element={
           <ProtectedRoute>
             <MainLayout>
-              <ErrorBoundary>
+              <RouteErrorBoundary>
                 <Suspense fallback={<RouteLoadingFallback />}>
                   <Component />
                 </Suspense>
-              </ErrorBoundary>
+              </RouteErrorBoundary>
             </MainLayout>
           </ProtectedRoute>
         }

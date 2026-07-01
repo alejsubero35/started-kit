@@ -9,9 +9,7 @@ import './index.css'
 import { registerServiceWorker } from './utils/serviceWorkerRegistration'
 import { resetApiBaseFromEnv } from './config/api';
 
-if (import.meta.env.DEV) {
-  resetApiBaseFromEnv();
-}
+resetApiBaseFromEnv();
 
 window.addEventListener('load', () => {
   if (import.meta.env.PROD) {
