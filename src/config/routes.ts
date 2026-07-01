@@ -9,6 +9,8 @@ import {
   LogIn,
   Upload,
   BarChart3,
+  UserCog,
+  UserCircle,
 } from 'lucide-react';
 
 export interface RouteConfig {
@@ -33,6 +35,8 @@ const NnaWizardPage = React.lazy(() => import('@/pages/nna/NnaWizardPage'));
 const SettingsPage = React.lazy(() => import('@/pages/SettingsPage'));
 const ImportPage = React.lazy(() => import('@/pages/imports/ImportPage'));
 const ReportsPage = React.lazy(() => import('@/pages/reports/ReportsPage'));
+const UsersPage = React.lazy(() => import('@/pages/users/UsersPage'));
+const ProfilePage = React.lazy(() => import('@/pages/profile/ProfilePage'));
 const NotFound = React.lazy(() => import('@/pages/NotFound'));
 const Unauthorized = React.lazy(() => import('@/pages/Unauthorized'));
 
@@ -64,6 +68,15 @@ export const routeConfig: RouteConfig[] = [
     showInSidebar: true,
   },
   {
+    id: 'users',
+    path: '/users',
+    label: 'Usuarios',
+    icon: UserCog,
+    component: UsersPage,
+    requiredRoles: ['super-admin'],
+    showInSidebar: true,
+  },
+  {
     id: 'nna',
     path: '/nna',
     label: 'Registro NNA',
@@ -79,7 +92,16 @@ export const routeConfig: RouteConfig[] = [
     icon: UserPlus,
     component: NnaWizardPage,
     requiredRoles: ['super-admin', 'admin-nacional', 'coordinador-estatal', 'registrador'],
-    showInSidebar: true,
+    showInSidebar: false,
+  },
+  {
+    id: 'nna-edit',
+    path: '/nna/:id/edit',
+    label: 'Editar NNA',
+    icon: UserPlus,
+    component: NnaWizardPage,
+    requiredRoles: ['super-admin', 'admin-nacional', 'coordinador-estatal', 'registrador'],
+    showInSidebar: false,
   },
   {
     id: 'catalogs',
@@ -115,6 +137,14 @@ export const routeConfig: RouteConfig[] = [
     icon: BarChart3,
     component: ReportsPage,
     requiredRoles: ['super-admin', 'admin-nacional', 'coordinador-estatal', 'consultor'],
+    showInSidebar: false,
+  },
+  {
+    id: 'profile',
+    path: '/profile',
+    label: 'Mi perfil',
+    icon: UserCircle,
+    component: ProfilePage,
     showInSidebar: false,
   },
   {

@@ -26,7 +26,7 @@
     --muted: 210 25% 96%;       /* light gray */
     --muted-foreground: 215 16% 40%; /* readable gray */
 
-    --accent: 0 72% 45%;       /* #C8102E red IDENNA */
+    --accent: 213 55% 35%;
     --accent-foreground: 0 0% 100%; /* #FFFFFF */
 
     --destructive: 0 84.2% 60.2%; /* standard red */
@@ -38,7 +38,7 @@
 
     /* Gradient colors for top bar (header) */
     --topbar-from: #103B73;
-    --topbar-to: #C8102E;
+    --topbar-to: #2E7D32;
 
     --radius: 0.5rem;
 
@@ -46,12 +46,12 @@
   /* Fondo: #103B73, Iconos: #F2811D, Texto: blanco */
   --sidebar-background: 213 76% 26%; /* ~#103B73 */
   --sidebar-foreground: 0 0% 100%;   /* white text */
-  --sidebar-primary: 0 72% 45%;     /* #C8102E red IDENNA */
-  --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 213 55% 20%;
-  --sidebar-accent-foreground: 0 72% 45%;
+  --sidebar-primary: 0 0% 100%;
+  --sidebar-primary-foreground: 213 76% 26%;
+  --sidebar-accent: 213 55% 32%;
+  --sidebar-accent-foreground: 0 0% 100%;
   --sidebar-border: 213 40% 35%;
-  --sidebar-ring: 0 72% 45%;
+  --sidebar-ring: 213 76% 40%;
 
   /* Chart colors for Recharts */
   --chart-1: 213 76% 26%;      /* navy */
@@ -93,12 +93,12 @@
     /* Dark theme: keep sidebar consistent with brand colors */
     --sidebar-background: 213 76% 20%; /* darker navy variant */
     --sidebar-foreground: 0 0% 100%;   /* white */
-    --sidebar-primary: 0 72% 45%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 213 60% 24%;
-    --sidebar-accent-foreground: 0 72% 45%;
+    --sidebar-primary: 0 0% 100%;
+    --sidebar-primary-foreground: 213 76% 26%;
+    --sidebar-accent: 213 60% 28%;
+    --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 213 40% 32%;
-    --sidebar-ring: 0 72% 45%;
+    --sidebar-ring: 213 76% 40%;
   }
 }
 

@@ -1,4 +1,5 @@
 import { apiService } from './api.service';
+import type { PaginatedResponse, PaginationParams } from './base/base.service';
 
 export interface NnaRecord {
   id?: number;
@@ -21,6 +22,7 @@ export interface NnaRecord {
   lugar_nna_id?: number;
   notes?: string;
   status?: string;
+  metadata?: Record<string, unknown>;
   discapacidad_ids?: number[];
   necesidad_ids?: number[];
   acompanantes?: Array<{
@@ -33,19 +35,60 @@ export interface NnaRecord {
   }>;
 }
 
+export interface NnaListItem {
+  id: number;
+  uuid?: string;
+  registration_code?: string;
+  first_name: string;
+  last_name: string;
+  full_name?: string;
+  birth_date?: string;
+  age_years?: number;
+  status?: string;
+  status_label?: string;
+  registered_at?: string;
+  synced_at?: string;
+}
+
+interface LaravelPaginated<T> {
+  data: T[];
+  meta: {
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+  };
+}
+
+function normalizePaginatedResponse<T>(raw: LaravelPaginated<T>): PaginatedResponse<T> {
+  return {
+    data: raw.data,
+    total: raw.meta.total,
+    page: raw.meta.current_page,
+    limit: raw.meta.per_page,
+    totalPages: raw.meta.last_page,
+  };
+}
+
 const OFFLINE_QUEUE_KEY = 'sirp_nna_offline_queue';
 
 export const nnaService = {
-  async list(params?: { operativo_id?: number; search?: string }) {
+  async listPaginated(
+    params?: PaginationParams & { operativo_id?: number },
+  ): Promise<PaginatedResponse<NnaListItem>> {
     const query = new URLSearchParams();
-    if (params?.operativo_id) query.set('operativo_id', String(params.operativo_id));
+    if (params?.page) query.set('page', String(params.page));
+    if (params?.limit) query.set('per_page', String(params.limit));
     if (params?.search) query.set('search', params.search);
-    const qs = query.toString() ? `?${query}` : '';
-    return apiService.get(`/nna${qs}`, true);
+    if (params?.operativo_id) query.set('operativo_id', String(params.operativo_id));
+    const qs = query.toString();
+    const raw = await apiService.get<LaravelPaginated<NnaListItem>>(`/nna${qs ? `?${qs}` : ''}`, true);
+    return normalizePaginatedResponse(raw);
   },
 
-  async get(id: number) {
-    return apiService.get(`/nna/${id}`, true);
+  async get(id: number): Promise<NnaRecord & { id: number; metadata?: Record<string, unknown> }> {
+    const res = await apiService.get<{ data: NnaRecord & { id: number } }>(`/nna/${id}`, true);
+    return res.data;
   },
 
   async create(payload: NnaRecord) {
@@ -54,6 +97,10 @@ export const nnaService = {
 
   async update(id: number, payload: Partial<NnaRecord>) {
     return apiService.put(`/nna/${id}`, payload, true);
+  },
+
+  async delete(id: number) {
+    return apiService.delete(`/nna/${id}`, true);
   },
 
   async syncBatch(records: NnaRecord[]) {

@@ -3,33 +3,21 @@ import { useUI } from '@/contexts/UIContext';
 import { useDemoAuth } from '@/features/auth/DemoAuthContext';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import {
   List,
   X,
-  Bell,
-  MagnifyingGlass,
-  Gear,
   SignOut,
-  User,
-  CaretDown,
-  Moon,
-  Sun
+  UserCircle,
+  Key,
 } from '@phosphor-icons/react';
+import { Link } from 'react-router-dom';
+import { assetUrl } from '@/lib/assets';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { Input } from '@/components/ui/input';
 
 interface HeaderProps {
   className?: string;
@@ -39,21 +27,10 @@ export function MasterHeader({ className = '' }: HeaderProps) {
   const { 
     toggleSidebar, 
     isMobile, 
-    isMobileDrawerOpen, 
-    isDarkMode,
-    toggleTheme
+    isMobileDrawerOpen,
   } = useUI();
   
   const { user, logout } = useDemoAuth();
-
-  // Mock notifications data
-  const notifications = [
-    { id: 1, title: 'Nuevo usuario registrado', description: 'Hace 5 minutos', read: false },
-    { id: 2, title: 'Actualización del sistema', description: 'Hace 1 hora', read: false },
-    { id: 3, title: 'Tarea completada', description: 'Hace 3 horas', read: true },
-  ];
-
-  const unreadCount = notifications.filter(n => !n.read).length;
 
   const handleLogout = async () => {
     try {
@@ -64,7 +41,7 @@ export function MasterHeader({ className = '' }: HeaderProps) {
   };
 
   return (
-    <header className={`sticky top-0 z-50 w-full border-b border-border/50 glass-header shadow-soft transition-smooth border-t-[3px] border-t-[#C8102E] ${className}`}>
+    <header className={`sticky top-0 z-50 w-full border-b border-border/50 glass-header shadow-soft transition-smooth border-t-[3px] border-t-[#103B73] ${className}`}>
       <div className="flex w-full h-16 items-center justify-between px-4 lg:px-8">
         {/* Left side - Menu Toggle (only on mobile/tablet) */}
         <div className="flex items-center gap-3">
@@ -90,74 +67,12 @@ export function MasterHeader({ className = '' }: HeaderProps) {
 
         {/* Center - Title with Logo (visible on mobile) */}
         <div className="flex items-center gap-2 lg:hidden absolute left-1/2 -translate-x-1/2">
-          <img src="/img/logo.png" alt="IDENNA" className="h-8 w-8 object-contain rounded bg-white p-0.5" />
+          <img src={assetUrl('img/logo.png')} alt="IDENNA" className="h-8 w-8 object-contain rounded bg-white p-0.5" />
           <span className="font-semibold text-foreground text-base">SIRP-NNA</span>
         </div>
 
         {/* Right side - Notifications, Theme Toggle, and User Avatar */}
         <div className="flex items-center gap-2">
-          {/* Theme Toggle */}
-       {/*    <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleTheme}
-            className="h-10 w-10 rounded-lg hover:bg-muted/80 transition-smooth focus-modern"
-          >
-            {isDarkMode ? (
-              <Sun className="h-5 w-5" weight="duotone" />
-            ) : (
-              <Moon className="h-5 w-5" weight="duotone" />
-            )}
-            <span className="sr-only">Toggle theme</span>
-          </Button> */}
-
-          {/* Notifications */}
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="relative h-10 w-10 rounded-lg hover:bg-muted/80 transition-smooth focus-modern"
-              >
-                <Bell className="h-5 w-5" weight="duotone" />
-                {notifications.length > 0 && (
-                  <Badge className="absolute -top-0.5 -right-0.5 h-5 w-5 flex items-center justify-center p-0 text-[10px] font-semibold bg-primary text-primary-foreground shadow-glow">
-                    {notifications.length}
-                  </Badge>
-                )}
-                <span className="sr-only">Notifications</span>
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-96 p-0 glass-card shadow-soft-lg" align="end">
-              <div className="p-4 border-b border-border/50">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-sm font-semibold">Notificaciones</h4>
-                  <Badge className="badge-primary">{notifications.length}</Badge>
-                </div>
-              </div>
-              <div className="max-h-[400px] overflow-y-auto">
-                {notifications.map((notification) => (
-                  <div
-                    key={notification.id}
-                    className="flex items-start gap-3 p-4 border-b border-border/30 hover:bg-muted/50 cursor-pointer transition-smooth last:border-0"
-                  >
-                    <div className={`mt-1.5 h-2 w-2 rounded-full flex-shrink-0 ${notification.read ? 'bg-muted-foreground/30' : 'bg-primary shadow-glow'}`} />
-                    <div className="flex-1 space-y-1 min-w-0">
-                      <p className="text-sm font-medium leading-tight">{notification.title}</p>
-                      <p className="text-xs text-muted-foreground leading-relaxed">{notification.description}</p>
-                      <p className="text-xs text-muted-foreground/70">{notification.description}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="p-3 border-t border-border/50">
-                <Button variant="ghost" className="w-full h-9 text-sm font-medium hover:bg-muted/80 transition-smooth" size="sm">
-                  Ver todas las notificaciones
-                </Button>
-              </div>
-            </PopoverContent>
-          </Popover>
-
           {/* User Avatar */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -188,13 +103,17 @@ export function MasterHeader({ className = '' }: HeaderProps) {
                 </div>
               </div>
               <div className="p-2">
-                <DropdownMenuItem className="rounded-lg cursor-pointer transition-smooth focus:bg-muted/80">
-                  <User className="mr-3 h-4 w-4" weight="duotone" />
-                  <span className="text-sm font-medium">Mi Perfil</span>
+                <DropdownMenuItem asChild className="rounded-lg cursor-pointer transition-smooth">
+                  <Link to="/profile" className="flex items-center">
+                    <UserCircle className="mr-3 h-4 w-4" weight="duotone" />
+                    <span className="text-sm font-medium">Mi perfil</span>
+                  </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="rounded-lg cursor-pointer transition-smooth focus:bg-muted/80">
-                  <Gear className="mr-3 h-4 w-4" weight="duotone" />
-                  <span className="text-sm font-medium">Configuración</span>
+                <DropdownMenuItem asChild className="rounded-lg cursor-pointer transition-smooth">
+                  <Link to="/profile#password" className="flex items-center">
+                    <Key className="mr-3 h-4 w-4" weight="duotone" />
+                    <span className="text-sm font-medium">Cambiar contraseña</span>
+                  </Link>
                 </DropdownMenuItem>
               </div>
               <div className="p-2 border-t border-border/50">

@@ -55,6 +55,14 @@ export const idennaAuthService = {
     await apiService.post('/logout', {}, true);
   },
 
+  async changePassword(payload: {
+    current_password?: string;
+    password: string;
+    password_confirmation: string;
+  }): Promise<void> {
+    await apiService.put('/me/password', payload, true);
+  },
+
   async getCurrentUser(): Promise<User | null> {
     const token = apiService.loadToken();
     if (!token) return null;

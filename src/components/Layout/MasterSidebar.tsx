@@ -4,11 +4,12 @@ import { useUI } from '@/contexts/UIContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Question, CaretDown, List } from '@phosphor-icons/react';
+import { CaretDown, List } from '@phosphor-icons/react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { cn } from '@/lib/utils';
 import { getSidebarRoutes } from '@/config/routes';
 import { useDemoAuth } from '@/features/auth/DemoAuthContext';
+import { assetUrl } from '@/lib/assets';
 
 interface SidebarItem {
   id: string;
@@ -65,7 +66,7 @@ export function MasterSidebar({ className = '' }: { className?: string }) {
 
     const itemContent = (
       <>
-        <Icon className={cn('h-4 w-4 shrink-0', isActive ? 'text-sidebar-primary' : 'text-sidebar-foreground/80')} />
+        <Icon className={cn('h-4 w-4 shrink-0', isActive ? 'text-white' : 'text-sidebar-foreground/75')} />
         {!isCollapsed && (
           <>
             <span className="flex-1 text-sm font-medium">{item.label}</span>
@@ -84,7 +85,7 @@ export function MasterSidebar({ className = '' }: { className?: string }) {
       return (
         <Collapsible key={item.id} open={isExpanded} onOpenChange={() => toggleExpanded(item.id)}>
           <CollapsibleTrigger asChild>
-            <Button variant="ghost" className={cn('w-full justify-start gap-3 h-10 rounded-lg text-sidebar-foreground/85 hover:text-sidebar-primary hover:bg-sidebar-accent', isCollapsed && 'justify-center px-2')}>
+            <Button variant="ghost" className={cn('w-full justify-start gap-3 h-10 rounded-lg text-sidebar-foreground/85 hover:bg-white/10 hover:text-white', isCollapsed && 'justify-center px-2')}>
               {itemContent}
             </Button>
           </CollapsibleTrigger>
@@ -101,8 +102,8 @@ export function MasterSidebar({ className = '' }: { className?: string }) {
           <Button
             variant="ghost"
             className={cn(
-              'w-full justify-start gap-3 h-10 rounded-lg text-sidebar-foreground/85 hover:text-sidebar-primary hover:bg-sidebar-accent',
-              isActive && 'bg-sidebar-accent text-sidebar-primary font-semibold shadow-sm',
+              'w-full justify-start gap-3 h-10 rounded-lg text-sidebar-foreground/85 hover:bg-white/10 hover:text-white',
+              isActive && 'bg-white/15 text-white font-semibold',
               isCollapsed && 'justify-center px-2',
             )}
             onClick={() => isMobile && closeMobileDrawer()}
@@ -130,7 +131,7 @@ export function MasterSidebar({ className = '' }: { className?: string }) {
           {!isSidebarCollapsed ? (
             <div className="flex items-center gap-3 min-w-0">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white p-1 overflow-hidden">
-                <img src="/img/logo.png" alt="IDENNA" className="h-full w-full object-contain" />
+                <img src={assetUrl('img/logo.png')} alt="IDENNA" className="h-full w-full object-contain" />
               </div>
               <div className="min-w-0">
                 <span className="block font-semibold text-sidebar-foreground leading-tight">SIRP-NNA</span>
@@ -139,11 +140,11 @@ export function MasterSidebar({ className = '' }: { className?: string }) {
             </div>
           ) : (
             <div className="mx-auto flex h-9 w-9 items-center justify-center rounded-lg bg-white p-1 overflow-hidden">
-              <img src="/img/logo.png" alt="IDENNA" className="h-full w-full object-contain" />
+              <img src={assetUrl('img/logo.png')} alt="IDENNA" className="h-full w-full object-contain" />
             </div>
           )}
           {isMobile && (
-            <Button variant="ghost" size="icon" onClick={closeMobileDrawer} className="h-9 w-9 text-sidebar-foreground hover:text-sidebar-primary hover:bg-sidebar-accent">
+            <Button variant="ghost" size="icon" onClick={closeMobileDrawer} className="h-9 w-9 text-sidebar-foreground hover:text-white hover:bg-white/10">
               <List className="h-4 w-4" />
             </Button>
           )}
@@ -163,15 +164,6 @@ export function MasterSidebar({ className = '' }: { className?: string }) {
             return el;
           })}
         </nav>
-
-        <div className="p-3 border-t border-sidebar-border">
-          {!isSidebarCollapsed && (
-            <Button variant="ghost" className="w-full justify-start gap-3 h-10 text-sidebar-foreground/85 hover:text-sidebar-primary hover:bg-sidebar-accent">
-              <Question className="h-4 w-4" />
-              <span className="text-sm">Ayuda</span>
-            </Button>
-          )}
-        </div>
       </div>
     </TooltipProvider>
   );

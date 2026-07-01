@@ -1,4 +1,4 @@
-import React from 'react';
+import { assetUrl } from '@/lib/assets';
 
 interface LoadingOverlayProps {
   show: boolean;
@@ -32,7 +32,7 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
       >
         <div className="mb-4 flex items-center justify-center">
           <img
-            src="/img/logo.png"
+            src={assetUrl('img/logo.png')}
             alt="IDENNA"
             className="h-20 w-20 object-contain rounded-lg bg-white p-2 drop-shadow-[0_0_18px_rgba(16,59,115,0.35)] logo-fade-in"
           />

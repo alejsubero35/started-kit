@@ -91,13 +91,23 @@ export default function CatalogTypePage() {
               <CardHeader className="py-3">
                 <div className="flex items-center justify-between gap-2">
                   <CardTitle className="text-base">{item.name}</CardTitle>
-                  <div className="flex items-center gap-1">
-                    <CustomButton variant="ghost" size="sm" onClick={() => openEdit(item)} aria-label="Editar">
-                      <Pencil className="h-4 w-4 text-[#103B73]" />
-                    </CustomButton>
-                    <CustomButton variant="ghost" size="sm" onClick={() => deleteMutation.mutate(item.id)} aria-label="Eliminar">
-                      <Trash2 className="h-4 w-4 text-destructive" />
-                    </CustomButton>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => openEdit(item)}
+                      aria-label="Editar"
+                      className="inline-flex h-8 w-8 items-center justify-center rounded-md bg-green-600 text-white transition-opacity hover:opacity-70"
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => deleteMutation.mutate(item.id)}
+                      aria-label="Eliminar"
+                      className="inline-flex h-8 w-8 items-center justify-center rounded-md bg-red-600 text-white transition-opacity hover:opacity-70"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
                   </div>
                 </div>
               </CardHeader>

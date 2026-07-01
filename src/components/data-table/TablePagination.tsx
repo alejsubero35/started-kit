@@ -36,9 +36,15 @@ export function TablePagination({
   const to = Math.min(page * pageSize, total);
 
   const visiblePages = React.useMemo(() => {
-    const max = Math.min(5, totalPages);
-    return Array.from({ length: max }, (_, i) => i + 1);
-  }, [totalPages]);
+    const maxVisible = 5;
+    if (totalPages <= maxVisible) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+    let start = Math.max(1, page - Math.floor(maxVisible / 2));
+    let end = Math.min(totalPages, start + maxVisible - 1);
+    start = Math.max(1, end - maxVisible + 1);
+    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+  }, [page, totalPages]);
 
   return (
     <div

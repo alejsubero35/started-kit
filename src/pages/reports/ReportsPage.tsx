@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CustomButton } from '@/components/ui/custom-button';
 import { reportsService } from '@/services/reports.service';
 import { useDemoAuth } from '@/features/auth/DemoAuthContext';
-import { FileSpreadsheet, FileText, Download } from 'lucide-react';
+import { FileSpreadsheet, Download } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function ReportsPage() {
@@ -26,7 +26,7 @@ export default function ReportsPage() {
         <p className="text-muted-foreground">Descarga registros NNA en múltiples formatos</p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader><CardTitle className="text-base">Excel</CardTitle></CardHeader>
           <CardContent>
@@ -40,14 +40,6 @@ export default function ReportsPage() {
           <CardContent>
             <CustomButton variant="outline" className="w-full" onClick={() => handleExport('csv')} leftIcon={<Download className="h-4 w-4" />}>
               Descargar .csv
-            </CustomButton>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader><CardTitle className="text-base">PDF</CardTitle></CardHeader>
-          <CardContent>
-            <CustomButton variant="outline" className="w-full" onClick={() => handleExport('pdf')} leftIcon={<FileText className="h-4 w-4" />}>
-              Descargar .pdf
             </CustomButton>
           </CardContent>
         </Card>

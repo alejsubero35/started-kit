@@ -5,6 +5,22 @@ export interface ImportPreview {
   sample_rows: Record<string, string>[];
   total_rows: number;
   suggested_mapping: Record<string, string>;
+  google_forms_terremoto?: boolean;
+}
+
+export interface ImportBatchResult {
+  id: number;
+  status: string;
+  success_rows?: number;
+  failed_rows?: number;
+  total_rows?: number;
+  summary?: {
+    imported?: number;
+    skipped?: number;
+    failed?: number;
+    total?: number;
+    mode?: string;
+  };
 }
 
 export const importsService = {
@@ -15,12 +31,19 @@ export const importsService = {
     return res.data;
   },
 
-  async import(file: File, operativoId: number, columnMapping: Record<string, string>) {
+  async import(
+    file: File,
+    operativoId: number,
+    columnMapping: Record<string, string> = {},
+    downloadPhotos = false,
+  ): Promise<ImportBatchResult> {
     const fd = new FormData();
     fd.append('file', file);
     fd.append('operativo_id', String(operativoId));
     fd.append('column_mapping', JSON.stringify(columnMapping));
-    return apiService.postFormData('/imports', fd);
+    if (downloadPhotos) fd.append('download_photos', '1');
+    const res = await apiService.postFormData<{ data: ImportBatchResult; message?: string }>('/imports', fd);
+    return res.data;
   },
 
   async history() {
