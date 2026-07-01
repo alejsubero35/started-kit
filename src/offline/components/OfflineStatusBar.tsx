@@ -19,7 +19,7 @@ function formatLastSync(value: string | null): string {
   }
 }
 
-export function OfflineStatusBar({ className }: { className?: string }) {
+export function OfflineHeaderControls({ className }: { className?: string }) {
   const { isOnline, isOffline, isSyncing, lastSync, pendingOperations, startSync } = useOffline();
   const { isInstallable, promptInstall } = useInstallPrompt();
   const [showProgressBar, setShowProgressBar] = useState(false);
@@ -116,24 +116,17 @@ export function OfflineStatusBar({ className }: { className?: string }) {
   }, []);
 
   const statusLabel = isSyncing ? 'Sincronizando' : isOnline ? 'En línea' : 'Sin conexión';
-
   const statusColor = isSyncing ? 'bg-amber-500' : isOnline ? 'bg-emerald-500' : 'bg-red-500';
-
   const syncedCount =
     syncTotal > 0 ? Math.min(syncTotal, Math.round((syncProgress / 100) * syncTotal)) : 0;
 
   return (
-    <div
-      className={cn(
-        'relative sticky top-0 z-[60] border-b border-[#103B73]/15 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80',
-        className,
-      )}
-    >
-      <div className="flex items-center justify-between gap-3 px-4 py-2 text-xs">
-        <div className="flex min-w-0 items-center gap-3">
+    <>
+      <div className={cn('flex min-w-0 flex-1 items-center justify-between gap-2 text-xs lg:gap-3', className)}>
+        <div className="flex min-w-0 items-center gap-2 lg:gap-3">
           <div className="flex shrink-0 items-center gap-2 font-medium">
             <span className={cn('h-2 w-2 rounded-full', statusColor)} />
-            <span className="w-[5.5rem]">{statusLabel}</span>
+            <span className="hidden w-[5.5rem] sm:inline">{statusLabel}</span>
             {isOffline ? (
               <CloudOff className="h-3.5 w-3.5 text-muted-foreground" />
             ) : (
@@ -145,21 +138,26 @@ export function OfflineStatusBar({ className }: { className?: string }) {
             variant={pendingOperations > 0 ? 'warning' : 'outline'}
             className="h-6 shrink-0 gap-1.5 px-2.5 font-medium"
           >
-            Pendientes
+            <span className="hidden sm:inline">Pendientes</span>
             <span className="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-background/20 px-1 text-[10px] font-bold">
               {pendingOperations}
             </span>
           </Badge>
 
-          <span className="hidden min-w-[11rem] truncate text-muted-foreground md:inline">
+          <span className="hidden min-w-[11rem] truncate text-muted-foreground lg:inline">
             Última sync: {formatLastSync(lastSync)}
           </span>
         </div>
 
         <div className="flex shrink-0 items-center gap-2">
           {isInstallable && (
-            <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => void promptInstall()}>
-              <Upload className="h-3 w-3 mr-1" />
+            <Button
+              size="sm"
+              variant="outline"
+              className="hidden h-7 text-xs md:inline-flex"
+              onClick={() => void promptInstall()}
+            >
+              <Upload className="mr-1 h-3 w-3" />
               Instalar aplicación
             </Button>
           )}
@@ -170,14 +168,15 @@ export function OfflineStatusBar({ className }: { className?: string }) {
             disabled={!isOnline || isSyncing || pendingOperations === 0}
             onClick={() => void startSync()}
           >
-            <RefreshCw className={cn('h-3 w-3 mr-1', isSyncing && 'animate-spin')} />
-            Sincronizar ahora
+            <RefreshCw className={cn('mr-1 h-3 w-3', isSyncing && 'animate-spin')} />
+            <span className="hidden sm:inline">Sincronizar ahora</span>
+            <span className="sm:hidden">Sync</span>
           </Button>
         </div>
       </div>
 
       {showProgressBar && (
-        <div className="pointer-events-none absolute inset-x-0 top-full z-10 border-b border-border/40 bg-muted/95 px-4 py-2 shadow-sm backdrop-blur">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 translate-y-full border-b border-border/40 bg-muted/95 px-4 py-2 shadow-sm backdrop-blur">
           <div className="space-y-1">
             <div className="flex items-center justify-between text-[11px] text-muted-foreground">
               <span>Sincronizando registros...</span>
@@ -189,6 +188,11 @@ export function OfflineStatusBar({ className }: { className?: string }) {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
+}
+
+/** @deprecated Usar OfflineHeaderControls dentro del header principal */
+export function OfflineStatusBar({ className }: { className?: string }) {
+  return <OfflineHeaderControls className={className} />;
 }

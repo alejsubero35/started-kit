@@ -21,5 +21,5 @@ export { usePendingRecords } from './hooks/usePendingRecords';
 export { useInstallPrompt } from './hooks/useInstallPrompt';
 export { useOfflineCollection } from './hooks/useOfflineCollection';
 
-export { OfflineStatusBar } from './components/OfflineStatusBar';
+export { OfflineHeaderControls, OfflineStatusBar } from './components/OfflineStatusBar';
 export { SyncStatusBadge } from './components/SyncStatusBadge';
